@@ -75,7 +75,7 @@ sed '' filter02.mafs | awk '{OFS="\t"; if ($1 !="chromo" && $5 >= 0.0136 && $6 =
 angsd sites index sites_bfv2_3x_maf0136_55ind.txt
 ```
 
-In all cases, we need to remove sites putatively on Z-chromosome, using the list of Z-chromosome scaffolds (```kiwi_zChr_scaffolds.txt```) generated in [01_Identify_Zchr_scaffolds.md](https://github.com/jordanbemmels/kiwi-holocene/blob/main/01_Identify_Zchr_scaffolds.md). Do this by using the small script [remove_kiwiZchr_fromSites_git.R](https://github.com/jordanbemmels/kiwi-holocene/blob/main/remove_kiwiZchr_fromSites_git.R), which will remove any lines from the whitelist that correspond to sites on putative Z-chromosome scaffolds.
+In all cases, we need to remove sites putatively on the Z-chromosome, using the list of Z-chromosome scaffolds (```kiwi_zChr_scaffolds.txt```) generated in [01_Identify_Zchr_scaffolds.md](https://github.com/jordanbemmels/kiwi-holocene/blob/main/01_Identify_Zchr_scaffolds.md). Do this by using the small script [remove_kiwiZchr_fromSites_git.R](https://github.com/jordanbemmels/kiwi-holocene/blob/main/remove_kiwiZchr_fromSites_git.R), which will remove any lines from the whitelist that correspond to sites on putative Z-chromosome scaffolds.
 
 ```
 Rscript remove_kiwiZchr_fromSites_git.R sites_bfv2_3x_maf00_55ind.txt
