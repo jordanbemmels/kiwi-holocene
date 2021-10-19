@@ -118,7 +118,7 @@ Then, repeat the same steps as above to identify and remove sites with excess he
 
 Technically, we are more interested in the NUMBER of sites that pass the same filters as for the variable sites, rather than the actual identities of these sites themselves, but we will first specifically find their identities then count the number of sites in that list. We will count the number of sites globally (all autosomes), and in smaller windows so we can additionally perform windowed analyses on these statistics. We will use the number of sites identified here in downstream analyses to adjust the pi and dXY estimates, rather than calculate those statistics directly from a whitelist of total sites (very inefficient in ANGSD).
 
-We repeat above command exactly (for the variable sites) **EXCEPT*** do not include a SNP filter, so that all sites will be printed including invariant sites (i.e., not just SNPs). And of course, the outfile name is different.
+We repeat above command exactly (for the variable sites) **EXCEPT** do not include a SNP filter, so that all sites will be printed including invariant sites (i.e., not just SNPs). And of course, the outfile name is different.
 
 ```
 FILTERS="-minQ 20 -minMapQ 20 -minInd 55 -setMinDepthInd 3 -setMaxDepth 926 -rmTriallelic 0.01"
