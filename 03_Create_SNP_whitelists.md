@@ -21,8 +21,8 @@ Next, we want to exclude SNPs with depth greater than the 99th percentile of all
 Also, exclude any SNPs with >75% heterozygosity, which also could be errors in alignment or assembly. To do this, we use the script 
 [HetMajorityProb.py](https://github.com/z0on/2bRAD_denovo/blob/master/HetMajorityProb.py) by Nate S. Pope. However, the default for this script is to calculate the probability that more than 50% of calls for a given site (the majority) are heterozygotes. To update the script to calculate the probability that more than 75% of the calls at a site are heterozygotes, we need to change line 25 in the script (current line number as of 2021/10/15):
 
-OLD LINE: ```utail_prob = pois_binom.pval(len(pr_heteroz)/2+1)```<br>
-NEW LINE: ```utail_prob = pois_binom.pval(int(len(pr_heteroz)*3/4))```
+**OLD LINE:** ```utail_prob = pois_binom.pval(len(pr_heteroz)/2+1)```<br>
+**NEW LINE:** ```utail_prob = pois_binom.pval(int(len(pr_heteroz)*3/4))```
 
 After updating, we are ready to run the heterozoygosity estimator the .geno output file from ANGSD above.
 
@@ -75,129 +75,46 @@ sed '' filter02.mafs | awk '{OFS="\t"; if ($1 !="chromo" && $5 >= 0.0136 && $6 =
 angsd sites index sites_bfv2_3x_maf0136_55ind.txt
 ```
 
-In all cases, we need to remove sites putatively on Z-chromosome, using the list of Z-chromosome scaffolds (```kiwi_zChr_scaffolds.txt```) generated in [01_Identify_Zchr_scaffolds.md](https://github.com/jordanbemmels/kiwi-holocene/blob/main/01_Identify_Zchr_scaffolds.md).
+In all cases, we need to remove sites putatively on Z-chromosome, using the list of Z-chromosome scaffolds (```kiwi_zChr_scaffolds.txt```) generated in [01_Identify_Zchr_scaffolds.md](https://github.com/jordanbemmels/kiwi-holocene/blob/main/01_Identify_Zchr_scaffolds.md). Do this by using the small script [remove_kiwiZchr_fromSites_git.R](https://github.com/jordanbemmels/kiwi-holocene/blob/main/remove_kiwiZchr_fromSites_git.R), which will remove any lines from the whitelist that correspond to sites on putative Z-chromosome scaffolds.
 
+```
+Rscript remove_kiwiZchr_fromSites_git.R sites_bfv2_3x_maf00_55ind.txt
+Rscript remove_kiwiZchr_fromSites_git.R sites_bfv2_3x_maf0136_55ind.txt
+```
 
-# process e.g. in R, remove any lines corresponding to sites on scaffolds that are listed in kiwi_zChr_scaffolds.txt
-# example for maf00 version:
+The outfiles are named *sites_bfv2_3x_maf00_55ind_noZ.txt* and *sites_bfv2_3x_maf0136_55ind_noZ.txt*, respectively.
 
-//
-# R script
-zChrScaffolds <- read.table("kiwi_zChr_scaffolds.txt");
-infile <- "sites_bfv2_3x_maf00_55ind.txt";
-outfile <- "sites_bfv2_3x_maf00_55ind_noZ.txt";
-#
-con  <- file(infile, open = "r");
-conOut <- file(outfile, open = "w");
-count = 0;
-while (length(oneLine <- readLines(con, n = 1, warn = FALSE)) > 0) {
-	if (count %% 100000 == 0) {
-		print(paste0("working on line ", count));
-	}
-	temp_line <- (strsplit(oneLine, "\t"));
-	if (temp_line[[1]][1] %in% zChrScaffolds) {
-		count = count + 1;
-	} else {
-		writeLines(oneLine, conOut);
-		count = count + 1;
-	}
-} 
-close(con);
-close(conOut);
-//
+Finally, for some analyses in Whitelist 01, we want to use SNPs thinned to a minimum distance of 10 kbp. We can use the small script [thinSNPs_git.py](https://github.com/jordanbemmels/kiwi-holocene/blob/main/thinSNPs_git.py), which will process read the (sorted) sites line by line and print only sites that are on a new scaffold or are at least 10kbp away from the previously printed site. If a different distance in kbp is desired, change the command-line argument to something other than 10. The argument format is: infile outfile minDistanceRequired.
 
-# names of outfiles:
+```
+python thinSNPs.py sites_bfv2_3x_maf00_55ind_noZ.txt sites_bfv2_3x_maf00_55ind_10kbp_noZ.txt 10
+python thinSNPs.py sites_bfv2_3x_maf0136_55ind_noZ.txt sites_bfv2_3x_maf0136_55ind_10kbp_noZ.txt 10
+```
 
-sites_bfv2_3x_maf00_55ind_noZ.txt
-sites_bfv2_3x_maf0136_55ind_noZ.txt
+Now we have available whitelists from Whitelist 01 to use for specific analyses:
+```sites_bfv2_3x_maf00_55ind_noZ.txt```: Fst
+```sites_bfv2_3x_maf0136_55ind_10kbp_noZ.txt```: PCAngsd
+```sites_bfv2_3x_maf00_55ind_10kbp_noZ.txt```: SNAPPER
 
-# thin to a minimum distance of 10-kbp
-# process line-by-line e.g. in python, print only sites that are on a new scaffold or are at least 10kbp away from the previously printed site
-# example for maf00 version:
+# WHITELIST 02
 
-//
-# python script
-import sys
-#
-inputSites = sites_bfv2_3x_maf00_55ind_noZ.txt
-outputFile = sites_bfv2_3x_maf00_55ind_10kbp_noZ.txt
-kbp = 10 # minimum distance between SNPs in kbp for thinning
-outfile = open(outputFile, 'w')
-#
-linecount = 0
-with open(inputSites) as f:
-	for line in f:
-		linecount = linecount + 1
-		if (linecount % 10000 == 0):
-			print("working on line " + str(linecount))
-		if (linecount > -1):
-			# split into chrom and pos
-			currentChrom, currentPos = line.split()[0], int(line.split()[1])
-			#print (currentChrom)
-			#print(currentPos)
-			# 
-			if (linecount == 1):
-				# if it's the very first line, accept the SNP
-				outfile.write(line)
-				#print("condition1")
-				previousChrom = currentChrom
-				previousPos = currentPos
-			elif (currentChrom != previousChrom):
-				# otherwise, check if it's a new chromosome, and if it is, accept the SNP
-				outfile.write(line)
-				#print("condition2")
-				previousChrom = currentChrom
-				previousPos = currentPos
-			elif (currentPos >= previousPos + kbp*1000):
-				# otherwise, only write the SNP if it is at least the desired kbp away
-				outfile.write(line)
-				#print(previousPos + kbp*1000)
-				#print(currentPos)
-				#print("condition3")
-				previousChrom = currentChrom
-				previousPos = currentPos
-#
-outfile.close()
-//
+Whitelist 02 describes creating input sets of SNPs for pi (nucleotide diversity) and dXY. For these calculations, filtering is different than above because we need two list of both VARIABLE and TOTAL sites. The two lists must be generated using exactly the same commands, but initial trials repeating whitelist 01 for TOTAL sites ran into difficulties, with the lists not being directly comparable due to different ways in which applying filters sequentially across multiple steps sometimes resulted in different behaviour for variable and non-variable sites. Instead, Whitelist 02 standardizes the commands and ensures that the filters for both sets used are exactly the same and applied in a straightforward way, and all at once, to get rid of the unwanted behaviour.
 
-# names of outfiles:
+## Variable sites
 
-sites_bfv2_3x_maf00_55ind_10kbp_noZ.txt
-sites_bfv2_3x_maf0136_55ind_10kbp_noZ.txt
-
-# input whitelists of SNPs from Group 01 for specific analyses:
-	# Fst: sites_bfv2_3x_maf0136_55ind_noZ.txt
-	# PCAngsd: sites_bfv2_3x_maf0136_55ind_10kbp_noZ.txt
-	# SNAPPER: sites_bfv2_3x_maf00_55ind_10kbp_noZ.txt
-
-#####
-##### WHITELIST 02 AS DESCRIBED IN SUPPLEMENTARY METHODS ####
-#####
-
-# whitelist 02 describes creating input sets of SNPs for pi (nucleotide diversity) and dXY
-
-# filtering is different than above because we need two list of both VARIABLE and TOTAL sites
-# the two lists must be generated using exactly the same commands
-# initial trials repeating whitelist 01 but for TOTAL sites ran into difficulties
-# instead, this standardizes the commands and ensures that the filters for both sets used are exactly the same
-
-### VARIABLE SITES
-
-# require data for all 55 individuals right from the beginning, implement the maximum depth, no minimum MAF
+We require data for all 55 individuals right from the beginning, implement a maximum depth directly, and importantly require no minimum MAF.
 
 FILTERS="-minQ 20 -minMapQ 20 -minInd 55 -setMinDepthInd 3 -setMaxDepth 926 -rmTriallelic 0.01 -SNP_pval 0.01"
 TODO="-doCounts 1 -dumpCounts 1 -doMajorMinor 1 -doMAF 1"
 angsd -b BAM_FILES_LIST.txt -GL 1 -P 1 $FILTERS $TODO -out filter02_noHetFilter
 
-# follow the same steps above to remove the sites with excess heterozygosity, remove Z-chromosome, save final file as:
+When, repeat the same steps as above to identify and remove sites with excess heterozygosity, and remove the Z-chromosome. The final outfile is:
 
-sites_bfv3_forDxy_maf00_noZ.txt
+```sites_bfv3_forDxy_maf00_noZ.txt```
 
-### TOTAL SITES
+## Total sites
 
-# here, we are more interested in the NUMBER of sites that pass the same filters as for the variable sites, rather than the actual identities of these sites themselves
-# the logic will be to count the number of sites globally (all autosomes) and in smaller windows
-# then, we can use the number of sites later (see pi and Dxy calculation sections) to adjust the pi and dXY estimates, rather than calculate directly from total sites (very inefficient in ANGSD)
+Technically, we are more interested in the NUMBER of sites that pass the same filters as for the variable sites, rather than the actual identities of these sites themselves, but we will first specifically find their identities then count the number of sites in that list. We will count the number of sites globally (all autosomes), and in smaller windows so we can additionally perform windowed analyses on these statistics. We will use the number of sites identified here in downstream analyses to adjust the pi and dXY estimates, rather than calculate those statistics directly from a whitelist of total sites (very inefficient in ANGSD).
 
 # repeat above command exactly EXCEPT do not include a SNP filter, so that all sites will be printed (not only SNPs)
 
