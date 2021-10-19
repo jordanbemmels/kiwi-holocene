@@ -24,7 +24,7 @@ Also, exclude any SNPs with >75% heterozygosity, which also could be errors in a
 **OLD LINE:** ```utail_prob = pois_binom.pval(len(pr_heteroz)/2+1)```<br>
 **NEW LINE:** ```utail_prob = pois_binom.pval(int(len(pr_heteroz)*3/4))```
 
-After updating, we are ready to run the heterozoygosity estimator the .geno output file from ANGSD above.
+After updating, we are ready to run the heterozoygosity estimator using the .geno output file from ANGSD above.
 
 ```
 gunzip --keep filter01.geno.gz
