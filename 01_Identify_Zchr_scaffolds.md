@@ -43,6 +43,6 @@ Save the list of ostrich Z-chromosome scaffolds as the following file:
 
 [*ostrich_Zscaffolds_withNames.txt*](https://github.com/jordanbemmels/kiwi-holocene/blob/main/ostrich_Zscaffolds_withNames.txt)
 
-Use the *R* script [*determineWhichKiwiZ_git.R*](https://github.com/jordanbemmels/kiwi-holocene/blob/main/determineWhichKiwiZ_git.R) to determine which kiwi scaffolds putatively map to ostrict Z-chromosome scaffolds. These will be those with ≥50% of the total alignment length or ≥500,000 bp matching. The output file is called:
+Use the *R* script [*determineWhichKiwiZ_git.R*](https://github.com/jordanbemmels/kiwi-holocene/blob/main/determineWhichKiwiZ_git.R) to determine which kiwi scaffolds putatively map to ostrict Z-chromosome scaffolds. These will be those with ≥50% of the total alignment length or ≥500,000 bp matching. The MUMmer file plus the ostrich Z-chromosome scaffolds file are inputs. The output file is called:
 
 [*kiwi_zChr_scaffolds.txt*](https://github.com/jordanbemmels/kiwi-holocene/blob/main/kiwi_zChr_scaffolds.txt)
