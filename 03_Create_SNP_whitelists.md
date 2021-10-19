@@ -138,7 +138,7 @@ Finally, count the total number of sites in all 5-kbp windows of the genome. We 
 python countPer5kbpWindow_startPos1_git.py allSites_filtered.pos allSites_filtered_5kbpWindow_startPos1.txt
 ```
 
-Finally, count the number of total sites in the genome that have now passed the equivalent set of filters used to identify variable sites for Whitelist 02. To do so, simply open the previous outfile (e.g., in *R*) and print the number of sites that are or are not on kiwi Z-chromosome scaffolds (as identified in ```kiwi_zChr_scaffolds.txt```).
+Finally, count the number of total sites in the genome that have now passed the equivalent set of filters used to identify variable sites for Whitelist 02. To do so, simply open the previous outfile ```allSites_filtered_5kbpWindow_startPos1.txt``` (e.g., in *R*) and print the number of sites that are or are not on kiwi Z-chromosome scaffolds (as identified in ```kiwi_zChr_scaffolds.txt```).
 
 Total sites including Zchr: 844430544<br>
 Sites on Zchr: 40778120<br>
