@@ -104,11 +104,13 @@ Whitelist 02 describes creating input sets of SNPs for pi (nucleotide diversity)
 
 We require data for all 55 individuals right from the beginning, implement a maximum depth directly, and importantly require no minimum MAF.
 
+```
 FILTERS="-minQ 20 -minMapQ 20 -minInd 55 -setMinDepthInd 3 -setMaxDepth 926 -rmTriallelic 0.01 -SNP_pval 0.01"
 TODO="-doCounts 1 -dumpCounts 1 -doMajorMinor 1 -doMAF 1"
 angsd -b BAM_FILES_LIST.txt -GL 1 -P 1 $FILTERS $TODO -out filter02_noHetFilter
+```
 
-When, repeat the same steps as above to identify and remove sites with excess heterozygosity, and remove the Z-chromosome. The final outfile is:
+Then, repeat the same steps as above to identify and remove sites with excess heterozygosity, and remove the Z-chromosome. The final outfile is:
 
 ```sites_bfv3_forDxy_maf00_noZ.txt```
 
@@ -116,16 +118,21 @@ When, repeat the same steps as above to identify and remove sites with excess he
 
 Technically, we are more interested in the NUMBER of sites that pass the same filters as for the variable sites, rather than the actual identities of these sites themselves, but we will first specifically find their identities then count the number of sites in that list. We will count the number of sites globally (all autosomes), and in smaller windows so we can additionally perform windowed analyses on these statistics. We will use the number of sites identified here in downstream analyses to adjust the pi and dXY estimates, rather than calculate those statistics directly from a whitelist of total sites (very inefficient in ANGSD).
 
-# repeat above command exactly EXCEPT do not include a SNP filter, so that all sites will be printed (not only SNPs)
+We repeat above command exactly (for the variable sites) **EXCEPT*** do not include a SNP filter, so that all sites will be printed including invariant sites (i.e., not just SNPs). And of course, the outfile name is different.
 
+```
 FILTERS="-minQ 20 -minMapQ 20 -minInd 55 -setMinDepthInd 3 -setMaxDepth 926 -rmTriallelic 0.01"
 TODO="-doCounts 1 -dumpCounts 1 -doMajorMinor 1 -doMAF 1"
 angsd -b BAM_FILES_LIST.txt -GL 1 -P 1 $FILTERS $TODO -out allSites_noHetFilter
+```
 
-# follow the same steps above to remove the sites with excess heterozygosity (may need to split file on multiple cores for efficiency / memory), save file as:
-# note that the Z-chromosome was not yet removed (although it perhaps could have been here, as we have no need of the below info the Z-chromosome);
+Again, follow the same steps above from Whitelist 01 to remove the sites with excess heterozygosity. Note that you do not need to re-determine a new set of excess heterozygous sites (relative to that created immediately above in Whitelist 02 for the variable sites), because none of the additional new sites added here will have excess heterozygosity, as the additional sites are all invariant. In other words, you can re-use the excess heterozygosity file from *Whitelist 02/Variable sites*. Depending on your machine, ou may need to split up the sites file on multiple cores for efficiency/memory, then recombine the output into a single file. The final file with excess heterozygosity sites removed is:
 
-allSites_filtered.pos
+```allSites_filtered.pos```
+
+Note that the Z-chromosome was not yet removed from this file (although it perhaps could have been).
+
+Finally, count the total number of sites in all 5-kbp windows of the genome. We use 5-kbp (quite small) so that we can employ modularity in downstream analyses if desired, i.e., we can quickly combine the windows to get the number of sites in windows that are any multiple of 5,000 bp, without having to re-process the enormous file of all sites every single time.
 
 # count the total number of sites initially per 5-kbp window
 
