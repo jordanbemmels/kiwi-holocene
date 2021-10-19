@@ -126,7 +126,7 @@ TODO="-doCounts 1 -dumpCounts 1 -doMajorMinor 1 -doMAF 1"
 angsd -b BAM_FILES_LIST.txt -GL 1 -P 1 $FILTERS $TODO -out allSites_noHetFilter
 ```
 
-Again, follow the same steps above from Whitelist 01 to remove the sites with excess heterozygosity. Note that you do not need to re-determine a new set of excess heterozygous sites (relative to that created immediately above in Whitelist 02 for the variable sites), because none of the additional new sites added here will have excess heterozygosity, as the additional sites are all invariant. In other words, you can re-use the excess heterozygosity file from *Whitelist 02/Variable sites*. Depending on your machine, ou may need to split up the sites file on multiple cores for efficiency/memory, then recombine the output into a single file. The final file with excess heterozygosity sites removed that we need for further processing is called:
+Again, follow the same steps above from Whitelist 01 to remove the sites with excess heterozygosity. Note that you do not need to re-determine a new set of excess heterozygous sites (relative to that created immediately above in Whitelist 02 for the variable sites), because none of the additional new sites added here will have excess heterozygosity, as the additional sites are all invariant. In other words, you can re-use the excess heterozygosity file from *Whitelist 02/Variable sites*. Depending on your machine, you may need to split up the sites file on multiple cores for efficiency/memory, then recombine the output into a single file. The final file with excess heterozygosity sites removed that we need for further processing is called:
 
 ```allSites_filtered.pos```
 
