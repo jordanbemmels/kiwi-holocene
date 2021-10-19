@@ -4,7 +4,7 @@ We will use [ngsRelateV2](https://github.com/ANGSD/NgsRelate) to check the pairw
 
 As input, we need ANGSD VCF files (.bcf, extension has "b" not "v"). To generate these, we will calculate genotype likelihoods for each population individually and create output .bcf files (-dobcf 1). We can almost use the SNPs from [Whitelist 03](https://github.com/jordanbemmels/kiwi-holocene/blob/main/03_Create_SNP_whitelists.md); **however**, ngsRelateV2 should be run with unlinked sites, otherwise relatedness coefficients can be overestimated.
 
-So, first create list of unlinked sites (minimum distance 10kbp) for each of the individual populations. An example is shown for aHaast (further details are explained [previously](https://github.com/jordanbemmels/kiwi-holocene/blob/main/03_Create_SNP_whitelists.md)): 
+So, first create list of unlinked sites (minimum distance 10kbp) for each of the individual populations. An example is shown for the aHaast population, also sometimes written in full as australis__Haast (further details of this command are explained [previously](https://github.com/jordanbemmels/kiwi-holocene/blob/main/03_Create_SNP_whitelists.md)): 
 
 ```
 python thinSNPs.py sites_australis__Haast_bfv2_3x_maf00_noZ.txt sites_australis__Haast_bfv2_3x_maf00_10kbp_noZ.txt 10
