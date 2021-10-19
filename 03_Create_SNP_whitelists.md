@@ -24,48 +24,60 @@ Also, exclude any SNPs with >75% heterozygosity, which also could be errors in a
 OLD LINE: ```utail_prob = pois_binom.pval(len(pr_heteroz)/2+1)```<br>
 NEW LINE: ```utail_prob = pois_binom.pval(int(len(pr_heteroz)*3/4))```
 
+After updating, we are ready to run the heterozoygosity estimator the .geno output file from ANGSD above.
 
-# ready to run on the .geno output file from ANGSD above
-
+```
 gunzip --keep filter01.geno.gz
 python HetMajorityProb.py < filter01.geno > hetExcessProbs.txt
+```
 
-# print ANGSD-format whitelist of sites that did not show >75% heterozygosity
+Convert the output into an ANGSD-format whitelist of sites that did not show >75% heterozygosity.
 
+```
 sed '' hetExcessProbs.txt | awk '{OFS="\t"; if ($6 < 0.05){print $1,$2}}' > sitesHetFilter.txt
 angsd sites index sitesHetFilter.txt
+```
 
-#####
+## Re-run ANGSD with heterozygosity and depth filters applied
 
-# re-run ANGSD, using the whitelist of sites (-sites sitesHetFilter.txt) that did not show excess heterozygosity and the maximum depth (-setMaxDepth 926) calculated above
-# SNP_pval, minInd, rmTriallelic, setMinDepthInd filters do not need to be repeated as the sitesHetFilter.txt includes only sites that previously passed all those filters
+Re-run ANGSD, using the whitelist of sites (```-sites sitesHetFilter.txt```) that did not show excess heterozygosity and the maximum depth (```-setMaxDepth 926```) calculated above. The *SNP_pval*, *minInd*, *rmTriallelic*, and *setMinDepthInd* filters do not need to be repeated as the sitesHetFilter.txt includes only sites that previously passed all those filters.
 
+```
 FILTERS="-minMapQ 20 -minQ 20 -setMaxDepth 926 -sites sitesHetFilter.txt"
 TODO="-doCounts 1 -doDepth 1 -maxDepth 1000 -doMajorMinor 1 -doMAF 1 -doGeno 3 -doPost 2"
 angsd -b BAM_FILES_LIST.txt -GL 1 -P 4 $FILTERS $TODO -out filter02
+```
 
-# print whitelist of sites that passed this second round of filtering; use the output .maf file
+Now, print a whitelist of sites that passed this second round of filtering. As input, use the output .maf file from the previous step.
 
+```
 gunzip --keep filter02.mafs.gz
 sed '' filter02.mafs | awk '{OFS="\t"; if ($1 !="chromo"){print $1,$2,$3,$4}}' > sitesFilter02.txt
 angsd sites index sitesFilter02.txt
+```
 
-#####
+## Additional filtering and subsetting
 
-# apply additional filtering and subsetting for analyses
+We will want to further filter the basic list of sites (```sitesFilter02.txt```) to prepare whitelists for specific analyses.
 
-# print only sites with data at all 55 individuals
+In all cases, we would like to print only sites with data at all 55 individuals.
 
+```
 sed '' filter02.mafs | awk '{OFS="\t"; if ($1 !="chromo" && $6 == "55"){print $1,$2,$3,$4}}' > sitesFilter02_55ind.txt
 mv sitesFilter02_55ind.txt sites_bfv2_3x_maf00_55ind.txt # rename
 angsd sites index sites_bfv2_3x_maf00_55ind.txt
+```
 
-# also identify non-singletons (minimum minor allele frequency = 1.5 / (55*2) alleles = 0.0136; we require 1.5 instead of 2 allele copies to account for ANGSD's probabilistic framework)
+We can also create a different filter also requiring complete data for all 55 individuals but additionally identifying only non-singletons (minimum minor allele frequency = 1.5 / (55\*2) alleles = 0.0136; we require 1.5 instead of 2 allele copies to account for ANGSD's probabilistic framework).
 
+```
 sed '' filter02.mafs | awk '{OFS="\t"; if ($1 !="chromo" && $5 >= 0.0136 && $6 == "55"){print $1,$2,$3,$4}}' > sitesFilter02_maf0136_55ind.txt
 angsd sites index sites_bfv2_3x_maf0136_55ind.txt
+```
 
-# remove sites putatively on Z-chromosome, using list of Z-chromosome scaffolds from above
+In all cases, we need to remove sites putatively on Z-chromosome, using the list of Z-chromosome scaffolds (```kiwi_zChr_scaffolds.txt```) generated in [01_Identify_Zchr_scaffolds.md](https://github.com/jordanbemmels/kiwi-holocene/blob/main/01_Identify_Zchr_scaffolds.md).
+
+
 # process e.g. in R, remove any lines corresponding to sites on scaffolds that are listed in kiwi_zChr_scaffolds.txt
 # example for maf00 version:
 
