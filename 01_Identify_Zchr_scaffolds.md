@@ -39,5 +39,10 @@ These are any kiwi scaffolds aligning to known ostrich Z-chromosome scaffolds. A
 Zhang J, Li C, Zhou Q, Zhang G. 2015 Improving the ostrich genome assembly using optical mapping data. Gigascience 4, 4–6.<br>
 Xu L, Wa Sin SY, Grayson P, Edwards S V., Sackton TB, Mank J. 2019 Evolutionary dynamics of sex chromosomes of Paleognathous birds. Genome Biol. Evol. 11, 2376–2390.
 
+Save the list of ostrich Z-chromosome scaffolds as the following file:
 
+*ostrich_Zscaffolds_withNames.txt*
 
+Use the *R* script *determineWhichKiwiZ_git.R* to determine which kiwi scaffolds putatively map to ostrict Z-chromosome scaffolds. These will be those with ≥50% of the total alignment length or ≥500,000 bp matching. The output file is called:
+
+*kiwi_zChr_scaffolds.txt*
