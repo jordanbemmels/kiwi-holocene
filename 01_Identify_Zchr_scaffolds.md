@@ -34,11 +34,10 @@ show-coords -l -q -T ostrich_kiwi_q_i50_l500.delta > ostrich_kiwi_q_i50_l500_coo
 
 ## Identify which aligned kiwi scaffolds are putatively on the Z-chromosome
 
-These are any kiwi scaffolds aligning to known ostrich Z-chromosome scaffolds. A list of ostrich Z-chromosome scaffolds is available from Fig. 1 in [Zhang et al. (2015)](doi:10.1186/s13742-015-0062-9).  Exclude from this list the erroneously placed scaffolds from [Xu et al. (2019)](doi:10.1093/gbe/evz154), i.e., those which were determined to have been erroneously mapped to the Z-chromosome.
+These are any kiwi scaffolds aligning to known ostrich Z-chromosome scaffolds. A list of ostrich Z-chromosome scaffolds is available from Fig. 1 in [Zhang et al. (2015)](https://doi.org/10.1186/s13742-015-0062-9).  Exclude from this list the erroneously placed scaffolds from [Xu et al. (2019)](https://doi.org/10.1093/gbe/evz154), i.e., those which were determined to have been erroneously mapped to the Z-chromosome.
 
-Citations:
-Zhang J, Li C, Zhou Q, Zhang G. 2015 Improving the ostrich genome assembly using optical mapping data. Gigascience 4, 4–6. (doi:10.1186/s13742-015-0062-9)
-Xu L, Wa Sin SY, Grayson P, Edwards S V., Sackton TB, Mank J. 2019 Evolutionary dynamics of sex chromosomes of Paleognathous birds. Genome Biol. Evol. 11, 2376–2390. (doi:10.1093/gbe/evz154)
+Zhang J, Li C, Zhou Q, Zhang G. 2015 Improving the ostrich genome assembly using optical mapping data. Gigascience 4, 4–6.
+Xu L, Wa Sin SY, Grayson P, Edwards S V., Sackton TB, Mank J. 2019 Evolutionary dynamics of sex chromosomes of Paleognathous birds. Genome Biol. Evol. 11, 2376–2390.
 
 
 
