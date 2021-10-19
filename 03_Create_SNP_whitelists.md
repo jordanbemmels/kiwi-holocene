@@ -126,93 +126,53 @@ TODO="-doCounts 1 -dumpCounts 1 -doMajorMinor 1 -doMAF 1"
 angsd -b BAM_FILES_LIST.txt -GL 1 -P 1 $FILTERS $TODO -out allSites_noHetFilter
 ```
 
-Again, follow the same steps above from Whitelist 01 to remove the sites with excess heterozygosity. Note that you do not need to re-determine a new set of excess heterozygous sites (relative to that created immediately above in Whitelist 02 for the variable sites), because none of the additional new sites added here will have excess heterozygosity, as the additional sites are all invariant. In other words, you can re-use the excess heterozygosity file from *Whitelist 02/Variable sites*. Depending on your machine, ou may need to split up the sites file on multiple cores for efficiency/memory, then recombine the output into a single file. The final file with excess heterozygosity sites removed is:
+Again, follow the same steps above from Whitelist 01 to remove the sites with excess heterozygosity. Note that you do not need to re-determine a new set of excess heterozygous sites (relative to that created immediately above in Whitelist 02 for the variable sites), because none of the additional new sites added here will have excess heterozygosity, as the additional sites are all invariant. In other words, you can re-use the excess heterozygosity file from *Whitelist 02/Variable sites*. Depending on your machine, ou may need to split up the sites file on multiple cores for efficiency/memory, then recombine the output into a single file. The final file with excess heterozygosity sites removed that we need for further processing is called:
 
 ```allSites_filtered.pos```
 
 Note that the Z-chromosome was not yet removed from this file (although it perhaps could have been).
 
-Finally, count the total number of sites in all 5-kbp windows of the genome. We use 5-kbp (quite small) so that we can employ modularity in downstream analyses if desired, i.e., we can quickly combine the windows to get the number of sites in windows that are any multiple of 5,000 bp, without having to re-process the enormous file of all sites every single time.
+Finally, count the total number of sites in all 5-kbp windows of the genome. We use 5-kbp (quite small) so that we can employ modularity in downstream analyses if desired, i.e., we can quickly combine the windows to get the number of sites in windows that are any multiple of 5,000 bp, without having to tediously re-process the enormous file of all sites every single time. The summary of number of sites per 5-kbp is more wieldy. Use the script [countPer5kbpWindow_startPos1_git.py](https://github.com/jordanbemmels/kiwi-holocene/blob/main/countPer5kbpWindow_startPos1_git.py); the command-line arguments are an ANGSD-formatted .pos file, plus the output file name.
 
-# count the total number of sites initially per 5-kbp window
+```
+python countPer5kbpWindow_startPos1_git.py allSites_filtered.pos allSites_filtered_5kbpWindow_startPos1.txt
+```
 
-//
-# python script
-import sys
-import math
-posfile = allSites_filtered.pos
-outfile = allSites_filtered_5kbpWindow_startPos1.txt
-#
-currentChr = "none"
-currentStartPos = 1
-currentCount = 0
-with open(outfile, 'w') as o:
-	o.write("chr\tstart\tend\tSites\n")
-	with open(posfile) as f:
-		next(f) # this skips the header line - assumes the file has text header
-		for line in f:
-			chr,pos = line.split("\t")[0:2]
-			pos = int(pos)
-			if (chr == currentChr):
-				if (pos < currentStartPos + 5000):
-					# if we are on the same chromosome and haven't stepped outside the window, add to the count
-					currentCount = currentCount + 1
-				else:
-					# if we are on the same chromosome and HAVE stepped outside the window, print the line and start a new count
-					o.write('\t'.join([str(currentChr), str(int(currentStartPos)), str(int(currentStartPos + 5000)), str(currentCount)]) + "\n")
-					currentChr = chr
-					currentStartPos = (math.floor(pos / 5000) * 5000) + 1
-					currentCount = 1
-			else:
-				# if we are NOT on the same chromosome, print the line and start a new count
-				o.write('\t'.join([str(currentChr), str(int(currentStartPos)), str(int(currentStartPos + 5000)), str(currentCount)]) + "\n")
-				currentChr = chr
-				currentStartPos = (math.floor(pos / 5000) * 5000) + 1
-				currentCount = 1
-		# need to print the very last line to record the final count for the last window of the last chromosome
-		o.write('\t'.join([str(currentChr), str(int(currentStartPos)), str(int(currentStartPos + 5000)), str(currentCount)]) + "\n")
-//
+Finally, count the number of total sites in the genome that have now passed the equivalent set of filters used to identify variable sites for Whitelist 02. To do so, simply open the previous outfile (e.g., in *R*) and print the number of sites that are or are not on kiwi Z-chromosome scaffolds (as identified in ```kiwi_zChr_scaffolds.txt```).
 
-# use the outfile to count the total number of sites (that have passed filters) on the Z-chromosome and not on the Z-chromosome
-# e.g., open in R, sum the total number of sites on scaffolds matching and not matching kiwi_zChr_scaffolds.txt
+Total sites including Zchr: 844430544<br>
+Sites on Zchr: 40778120<br>
+Total sites excluding Zchr: 803652424<br> # the total number of autosomal sites we can use to adjust global estimates of pi and dXY
+Percent sites on Zchr: 4.8<br>
 
-# total sites including Zchr: 844430544
-# sites on Zchr: 40778120
-# total sites excluding Zchr: 803652424
-# percent sites on Zchr: 4.8
+# WHITELIST 03
 
-#####
-##### WHITELIST 03 AS DESCRIBED IN SUPPLEMENTARY METHODS ####
-#####
+Whitelist 03 describes creating input sets of SNPs that are **SPECIFIC TO EACH INDIVIDUAL LINEAGE**, for use with PopSizeABC and RAiSD. We want only SNPs that are truly variable in each individual lineage, to get the max number of SNPs and so as not to include invariant sites in population-specific analyes. Here, an example is provided for the population aHaast (also may be written out in full as australis__Haast), but these steps would need to be repeated for all of the populations in the project.
 
-# whitelist 03 describes creating input sets of SNPs that are SPECIFIC TO EACH INDIVIDUAL LINEAGE, for use with PopSizeABC and RAiSD
-# we want only SNPs that are truly variable in each individual lineage, to get the max number of SNPs and so as not to include invariant sites in population-specific analyes
+We will run ANGSD individually using our file from Whitelist 01 that has all SNPs across all 55 individuals: ```sites_bfv2_3x_maf00_55ind.txt```. Note that although we provide a sites file that already has major-minor allele designations across all 55 kiwi individuals, we use ```-doMajorMinor 1``` to re-identify major and minor allele designations for each population individually. We also require data for all 5 individuals in this population. The key step here is the ```-SNP_pval 0.01``` flag, which will re-identify which of our previously-filtered SNPs are still variable within each population.
 
-# begin with the whitelist from 01 that has all SNPs across all 55 individuals: sites_bfv2_3x_maf00_55ind.txt
-# note that although we provide a sites file that already has major-minor allele designations across all 55 kiwi individuals, we use -doMajorMinor 1 to re-identify major and minor allele designations for each population individually
-# require data for all 5 individuals in this population
-# call SNPs for each population individual; here an example for the population aHaast (also written out in full as australis__Haast)
-
+```
 FILTERS="-minMapQ 20 -minQ 20 -minInd 5 -SNP_pval 0.01 -sites sites_bfv2_3x_maf00_55ind.txt"
 TODO="-doMajorMinor 1 -doMAF 1"
 angsd -b BAM__australis__Haast.txt -GL 1 -P 1 $FILTERS $TODO -out australis__Haast
+```
 
-# create sites file specific to this population
+Create an indexed sites file for this population.
 
+```
 gunzip --keep australis__Haast.mafs.gz
 sed '' australis__Haast.mafs | awk '{OFS="\t"; if ($1 !="chromo"){print $1,$2,$3,$4}}' > sites_australis__Haast_bfv2_3x_maf00.txt
 angsd sites index sites_australis__Haast_bfv2_3x_maf00.txt
+```
 
-# follow example from above in Whitelist 01 section to remove Z-chromosome, save outfile as:
+Follow the example from above in the Whitelist 01 section to remove the Z-chromosome, and save the outfile as:
 
+```
 sites_australis__Haast_bfv2_3x_maf00_noZ.txt
+```
 
-# repeat Whitelist 03 steps for remaining lineages
-# these sites files are used as whitelists for PopSizeABC and RAiSD
+Repeat the above for the remainin 10 lineages. These sites files are used as whitelists for PopSizeABC and RAiSD.
 
-#####
-##### FILTERS FOR OTHER ANALYSES ####
-#####
+# FILTERS FOR OTHER ANALYSES
 
-# other analyses do not use pre-defined whitelists
-# SNP filtering (if any) for other analyses is described individually in the respective sections for each of the other analyses
+Other analyses do not use pre-defined SNP whitelists. SNP filtering (if any) for other analyses is described individually in the respective sections for each of the other analyses.
