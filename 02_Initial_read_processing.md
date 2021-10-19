@@ -4,22 +4,22 @@ These filtering steps are performed prior to proceeding with analyses. A generic
 
 ## Remove Illumina adaptors and low-quality bases
 
-This is performed using [Trimmomatic](http://www.usadellab.org/cms/?page=trimmomatic). The file of Illumina adapter sequences *TruSeq3-PE-2.fa* is distributed with Trimmomatic.
+This is performed using [Trimmomatic](http://www.usadellab.org/cms/?page=trimmomatic). The file of Illumina adapter sequences *TruSeq3-PE-2.fa* is [distributed](https://github.com/timflutre/trimmomatic/blob/master/adapters/TruSeq3-PE-2.fa) with Trimmomatic.
 
 ```
 java -jar trimmomatic-0.39.jar PE -threads 3 SAMPLE_R1_001.fasta.gz \
 	SAMPLE_R2_001.fasta.gz \
 	adaptorless_SAMPLE_R1.fastq.gz \
 	adaptorless_SAMPLE_R1_unpaired.fastq.gz \
-    adaptorless_SAMPLE_R2.fastq.gz \
+	adaptorless_SAMPLE_R2.fastq.gz \
 	adaptorless_SAMPLE_R2_unpaired.fastq.gz \
-    ILLUMINACLIP:TruSeq3-PE-2.fa:2:30:7:5:true \
-    TRAILING:3 LEADING:3 SLIDINGWINDOW:4:15 MINLEN:40 2>>SAMPLE_adaptrim_out.log
+	ILLUMINACLIP:TruSeq3-PE-2.fa:2:30:7:5:true \
+	TRAILING:3 LEADING:3 SLIDINGWINDOW:4:15 MINLEN:40 2>>SAMPLE_adaptrim_out.log
 ```
 
 ## Align reads to reference genome
 
-This is done with Bowtie2. The output is then piped through Samtools and saved as a .bam file.
+This is done with [Bowtie2](http://bowtie-bio.sourceforge.net/bowtie2/index.shtml). The output is then piped through [SAMtools](http://www.htslib.org/) and saved as a .bam file.
                                       
 ```
 bowtie2 -q --very-sensitive --no-unal --phred33 --time --threads 3 -x kiwi_ref_genome \
