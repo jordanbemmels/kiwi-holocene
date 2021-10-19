@@ -142,7 +142,7 @@ Finally, count the number of total sites in the genome that have now passed the 
 
 Total sites including Zchr: 844430544<br>
 Sites on Zchr: 40778120<br>
-Total sites excluding Zchr: 803652424<br> # the total number of autosomal sites we can use to adjust global estimates of pi and dXY
+Total sites excluding Zchr: 803652424 # the total number of autosomal sites we can use to adjust global estimates of pi and dXY<br>
 Percent sites on Zchr: 4.8<br>
 
 # WHITELIST 03
