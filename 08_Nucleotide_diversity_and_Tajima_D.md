@@ -51,7 +51,7 @@ Also print pi per 50-kbp window, with 25-kbp step size, to match the same design
 misc/thetaStat do_stat australis__Haast.thetas.idx -win 50000 -step 25000 -type 2 -outnames aHaast.thetas_win50k_step25k
 ```
 
-Adjust the windowed pi relative to the total number of sites passing filters, which was calculated [previously](https://github.com/jordanbemmels/kiwi-holocene/blob/main/07_dXY.md) for dXY and is available in the file ```FST_DIRECTORY/aHaast_aNorthFiordland.win50k_step25k.countSites.txt```. Use the script [adjustSlidingWindowPi_50kbp_step25kbp_git.R](https://github.com/jordanbemmels/kiwi-holocene/blob/main/adjustSlidingWindowPi_50kbp_step25kbp_git.R). The two command-line arguments are the input file and output file names, resectively.
+Adjust the windowed pi relative to the total number of sites passing filters, which was calculated [previously](https://github.com/jordanbemmels/kiwi-holocene/blob/main/07_dXY.md) per 50-kbp window for dXY and is available in the file ```FST_DIRECTORY/aHaast_aNorthFiordland.win50k_step25k.countSites.txt```. This file is used as a template within the following script. Use the script [adjustSlidingWindowPi_50kbp_step25kbp_git.R](https://github.com/jordanbemmels/kiwi-holocene/blob/main/adjustSlidingWindowPi_50kbp_step25kbp_git.R). The two command-line arguments are the input file and output file names, resectively.
 
 ```
 Rscript adjustSlidingWindowPi_50kbp_step25kbp_git.R aHaast.thetas_win50k_step25k.pestPG aHaast.thetas_win50k_step25k_adj.pestPG
