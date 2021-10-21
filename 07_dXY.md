@@ -52,39 +52,14 @@ We are ready to adjust the total divergence to convert it into an average per-si
 To adjust global estimate, we know that the total number of variant + invariant sites (passing the same filtering criteria as used for the variant sites only) was [previously](https://github.com/jordanbemmels/kiwi-holocene/blob/main/03_Create_SNP_whitelists.md) calculated when generating Whitelist 02 and was 803,652,424. As an example, the total divergence from the aHaast_aNorthFiordland_terminalOutput.txt file above is 1717128.07028095. Thus, the
 global dXY = 1717128.07028095 / 803652424 = 0.00214 for this particular population pair.
 
-To adjust the windowed estimates, first we need to calculate the number of total sites (variant + invariant) per 50-kbp window. We already have [previously](https://github.com/jordanbemmels/kiwi-holocene/blob/main/03_Create_SNP_whitelists.md) calculated the number of sites per 5-kbp window in Whitelist 02 (which was done for modularity so that we could use any window size we wanted that is a multiple of 5kbp). To combine the 5-kbp windows into 50-kbp windows, use the script XXXX. Again, we will match to the the Fst windows as a template (```FST_DIRECTORY/aHaast_aNorthFiordland.win50k_step25k.txt```).
+To adjust the windowed estimates, first we need to calculate the number of total sites (variant + invariant) per 50-kbp window. We already have [previously](https://github.com/jordanbemmels/kiwi-holocene/blob/main/03_Create_SNP_whitelists.md) calculated the number of sites per 5-kbp window in Whitelist 02 (which was done for modularity so that we could use any window size we wanted that is a multiple of 5kbp). To combine the 5-kbp windows into 50-kbp windows, use the script [countSitesPerWindow_git.R](https://github.com/jordanbemmels/kiwi-holocene/blob/main/countSitesPerWindow_git.R). Again, we will match to the the Fst windows as a template (```FST_DIRECTORY/aHaast_aNorthFiordland.win50k_step25k.txt```). Note that this only needs to be done once (not repeated for every possible population pair) assuming that the same sites are used for all population pairs. The output file is ```FST_DIRECTORY/aHaast_aNorthFiordland.win50k_step25k.countSites.txt```.
 
-//
-# R script
-#
-sites <- read.table("allSites_filtered_5kbpWindow_startPos1.txt", sep = "\t", header = T, stringsAsFactors = F);
-#
-# LOAD FILE;
-pairwise <- read.table("FST_DIRECTORY/aHaast_aNorthFiordland.win50k_step25k.txt", sep = "\t", skip = 1, stringsAsFactors = F);
-pairwise <- pairwise[ , 2:ncol(pairwise)]; # remove the row names, which are not useful and get in the way;
-colnames(pairwise) <- c("scaffold", "midPos", "Nsites", "Fst");
-#
-# CALCULATE TOTAL NUMBER OF SITES PER WINDOW - 50-kbp WINDOWS WITH 25-kbp STEP SIZE;
-pairwise$totalSites <- NA;
-for (k in 1:nrow(pairwise)) {
-	pairwise$totalSites[k] <- sum(sites$Sites[sites$chr == pairwise$scaffold[k] & sites$start >= (pairwise$midPos[k] - 25000) & sites$end <= (pairwise$midPos[k] + 25000)]);
-}
-write.table(pairwise, "FST_DIRECTORY/aHaast_aNorthFiordland.win50k_step25k.countSites.txt", sep = "\t", row.names = F, col.names = T, quote = F);
-//
+```
+Rscript countSitesPerWindow_git.R aHaast_aNorthFiordland_Dxy_win50k_step25k.txt aHaast_aNorthFiordland_Dxy_win50k_step25k_countSites_adj.txt
+```
 
-# now ready to finally adjust the windowed estimates, using the total number of sites from the Fst template just calculated above;
+Now, we are ready to finally adjust the windowed estimates, using the total number of sites just calculated above in ```FST_DIRECTORY/aHaast_aNorthFiordland.win50k_step25k.countSites.txt``` and the script [adjustSlidingWindowDxy_countSites_50kbp_step25kbp_git.R](https://github.com/jordanbemmels/kiwi-holocene/blob/main/adjustSlidingWindowDxy_countSites_50kbp_step25kbp_git.R).
 
-//
-# R script
-#
-template <- read.table("FST_DIRECTORY/aHaast_aNorthFiordland.win50k_step25k.countSites.txt", sep = "\t", header = T, stringsAsFactors = F);
-#
-cur_df <- read.table("aHaast_aNorthFiordland_Dxy_win50k_step25k.txt", sep = "\t", header = T, stringsAsFactors = F);	
-cur_df$totalSites <- NA;
-cur_df$Dxy <- NA;	
-for (j in 1:nrow(cur_df)) {		
-	cur_df$totalSites[j] <- template$totalSites[template$scaffold == cur_df$chr[j] & template$midPos == cur_df$midPos[j]];
-	cur_df$Dxy[j] <- cur_df$Dxy_uncorrected[j] / cur_df$totalSites[j];		
-}
-write.table(cur_df, "aHaast_aNorthFiordland_Dxy_win50k_step25k_countSites_adj.txt", row.names = F, quote = F, sep = "\t");
-//
+```
+Rscript adjustSlidingWindowDxy_countSites_50kbp_step25kbp_git.R
+```
