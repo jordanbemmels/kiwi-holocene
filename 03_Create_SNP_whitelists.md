@@ -92,7 +92,7 @@ python thinSNPs.py sites_bfv2_3x_maf0136_55ind_noZ.txt sites_bfv2_3x_maf0136_55i
 ```
 
 Now we have available whitelists from Whitelist 01 to use for specific analyses:<br>
-```sites_bfv2_3x_maf00_55ind_noZ.txt```: Fst<br>
+```sites_bfv2_3x_maf0136_55ind_noZ.txt```: Fst<br>
 ```sites_bfv2_3x_maf0136_55ind_10kbp_noZ.txt```: PCAngsd<br>
 ```sites_bfv2_3x_maf00_55ind_10kbp_noZ.txt```: SNAPPER
 
