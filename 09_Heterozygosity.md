@@ -12,7 +12,7 @@ The identity of autosomal vs. Z-chromosome scaffolds was [previously](https://gi
 
 Here we will demonstrate the calculation of Ho for a single individual (KW36) from the aHaast population.
 
-Calculate the folded site frequency spectrum (SFS) for a single diploid individual (single input BAM file specified with -i).
+Calculate the folded site frequency spectrum (SFS) for a single diploid individual (single input BAM file specified with ```-i```).
 
 ```
 angsd -i australis__Haast__KW36__RA0997_sorted.bam -GL 1 -P 1 -minMapQ 20 -minQ 20 -anc kiwi_ref_genome.fna -rf kiwi_autosomal_scaffolds.txt -doSaf 1 -fold 1 -out australis__Haast__KW36__RA0997
