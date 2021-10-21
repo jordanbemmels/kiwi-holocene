@@ -1,6 +1,6 @@
 # Observed heterozygosity (Ho)
 
-Observed heterozygosity (Ho) will be calculated in [ANGSD](http://www.popgen.dk/angsd/index.php/ANGSD). The the [ANGSD wiki](http://www.popgen.dk/angsd/index.php/Heterozygosity) suggests calculating Ho from all positions in the genome with minimal filtering, i.e., no filters for specific sites or minimum numbers of individuals. So, we will not use any pre-existing sites filter. However, we will provide a regions file to restrict our analysis to autosomes. The regions file (specified with -rf) is a list of autosomal scaffolds, one per line, followed by ":" to indicate to include all sites on that scaffold, for example:
+Observed heterozygosity (Ho) will be calculated in [ANGSD](http://www.popgen.dk/angsd/index.php/ANGSD). The the [ANGSD wiki](http://www.popgen.dk/angsd/index.php/Heterozygosity) suggests calculating Ho from all positions in the genome with minimal filtering, i.e., no filters for specific sites or minimum numbers of individuals. So, we will not use any pre-existing sites filter. However, we will provide a regions file to restrict our analysis to autosomes. The regions file (specified with ```-rf```) is a list of autosomal scaffolds, one per line, followed by ":" to indicate to include all sites on that scaffold, for example:
 
 ```
 scaffold_1:
