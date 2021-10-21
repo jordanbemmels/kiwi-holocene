@@ -29,7 +29,7 @@ The outfile ```maf0136_min0144_52ind_eAuto.cov``` contains the covariance matrix
 cov <- read.table("maf0136_min0144_52ind_eAuto.cov", header = F, sep = " ", stringsAsFactors = F);
 cov <- as.matrix(cov);
 cov.eigen <- eigen(cov);
-plot(cov.eigen$vectors[ , 1:2]);
+plot(cov.eigen$vectors[ , 1:2], xlab = "PC1", ylab = "PC2");
 ```
 
 # Manual selection of the number of clusters
