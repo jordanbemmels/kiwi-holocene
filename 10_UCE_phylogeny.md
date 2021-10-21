@@ -1,6 +1,6 @@
 # UCE phylogeny
 
-A phylogeny of ultra-conserved elements (UCEs) will be generated in [Astral-III](https://github.com/smirarab/ASTRAL).
+A phylogeny of ultra-conserved elements (UCEs) will be generated in [ASTRAL-III](https://github.com/smirarab/ASTRAL).
 
 ## Identify UCEs
 
@@ -55,21 +55,44 @@ The input files are specified within the script. There are several output files 
 
 ## Identify SNPs and call genotypes in ANGSD
 
-We will use ANGSD to identify SNPs and call genotypes the UCE ± 1000-bp regions specified with ```-rf aRowi_ref_UCEs_plus_2x1000bp.txt```, corresponding to the file we just generated. We are also requiring sequencing data for all 52 individuals (```-minInd 52```), only calling biallelic SNPs (```-SNP_pval 0.01 -rmTriallelic 0.01```), and implementing a minimum minor allele frequency (MAF) of (2 / 2\*52) = 0.0192, which gets rid of singletons by requiring at least two allele copies. This minimum MAF is different than in some previous analyses with ANGSD where we required only 1.5 allele copies due to ANGSD's probabilistic genotype calling framework, but here we increased it to 2 allele copies since we are actually calling genotypes and have half an allele copy. To account for high uncertainty (especially for sites with low depth for particular individuals), we only call genotypes with posterior probaiblity greater than 0.99 (```-postCutoff 0.99```). We use ```-doBCF 1``` to output a VCF file (.bcf extension).
+We will use ANGSD to identify SNPs and call genotypes. We are requiring sequencing data for all 52 individuals (```-minInd 52```), only calling biallelic SNPs (```-SNP_pval 0.01 -rmTriallelic 0.01```), and implementing a minimum minor allele frequency (MAF) of (2 / 2\*52) = 0.0192, which gets rid of singletons by requiring at least two allele copies. This minimum MAF is different than in some previous analyses with ANGSD where we required only 1.5 allele copies due to ANGSD's probabilistic genotype calling framework, but here we increased it to 2 allele copies since we are actually calling genotypes and have half an allele copy. To account for high uncertainty (especially for sites with low depth for particular individuals), we only call genotypes with posterior probability greater than 0.99 (```-postCutoff 0.99```). We use ```-doBCF 1``` to output a VCF file (.bcf extension).
+
+As the purpose of using ASTRAL-III is to create a single species tree from multiple individual gene trees, we need to run the below code block individually, once for each separate UCE ± 1000-bp flanking region specified on each line of the ```aRowi_ref_UCEs_plus_2x1000bp.txt``` file created above. Here is an example for the first region (```-r PTFB01000001.1:334063-336182```).
 
 ```
-FILTERS="-minMapQ 20 -minQ 20 -postCutoff 0.99 -minInd 52 -minMAF 0.0192 -SNP_pval 0.01 -rmTriallelic 0.01 -rf aRowi_ref_UCEs_plus_2x1000bp.txt"
+FILTERS="-minMapQ 20 -minQ 20 -postCutoff 0.99 -minInd 52 -minMAF 0.0192 -SNP_pval 0.01 -rmTriallelic 0.01 -r PTFB01000001.1:334063-336182"
 TODO="-doGeno 5 -dopost 1 -doMajorMinor 1 -doMAF 1 -doBCF 1 -doCounts 1"
-angsd -b BAM_FILES_LIST_52ind.txt -GL 1 -P 1 $FILTERS $TODO -out UCEs_plus_2x1000bp_noOG_52ind_maf0192
+angsd -b BAM_FILES_LIST_52ind.txt -GL 1 -P 1 $FILTERS $TODO -out -r PTFB01000001.1_334063_336182
 ```
 
 Convert the .bcf file to phylip format using the script [vcf2phylip.py](https://github.com/edgardomortiz/vcf2phylip) by Edgardo M. Ortiz (DOI 10.5281/zenodo.1257057).
 
 ```
 git clone https://github.com/edgardomortiz/vcf2phylip.git
-python vcf2phylip/vcf2phylip.py -i UCEs_plus_2x1000bp_noOG_52ind_maf0192.bcf
+python vcf2phylip/vcf2phylip.py -i PTFB01000001.1_334063_336182.bcf
 ```
 
-The outfile is named ```UCEs_plus_2x1000bp_noOG_52ind_maf0192.bcf.phy```.
+The outfile is named ```PTFB01000001.1_334063_336182.bcf.phy```.
 
-## 
+Repeat for all separate UCE regions as identified in ```aRowi_ref_UCEs_plus_2x1000bp.txt```. Note that some UCE loci may not have had any SNPs. In this case, the output file will have small file size and begins with ```55\t0```. Those loci should be excluded from downstream analyses.
+
+## Create gene tree for each locus
+
+An individual maximum likelihood (ML) gene tree is created for each UCE locus (±1000-bp) using [RAxML-NG](https://github.com/amkozlov/raxml-ng). We will use the GTR+G model, following [Vianna et al. (2020)](https://doi.org/10.1073/pnas.2006659117).
+
+Vianna JA et al. 2020 Genome-wide analyses reveal drivers of penguin diversification. Proc. Natl. Acad. Sci. U. S. A. 117, 22303–22310.
+
+```
+raxml-ng --msa PTFB01000001.1_334063_336182.bcf.phy --model GTR+G --prefix PTFB01000001.1_334063_336182.bcf.phy
+```
+
+There will be several output files, beginning with the specified prefix. Repeat the command for all individual UCE loci.
+
+After completed for all UCE loci, combine the collapsed output tree (e.g., ```PTFB01000001.1_334063_336182.bcf.phy.bestTreeCollapsed```) from each individual locus into a single file to use as input in the next step. The collapsed output tree has unresolved branches represented as polytomies, rather than randomly resolved in a bifurcating pattern.
+
+```
+cat *.bestTreeCollapsed > UCEs_plus_2x1000bp_52ind_RAx_genetrees_merge.tre
+```
+
+## Species tree estimation in ASTRAL-III
+
