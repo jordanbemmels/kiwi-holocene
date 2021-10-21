@@ -19,7 +19,7 @@ misc/realSFS BAM__australis__Haast.saf.idx > BAM__australis__Haast.sfs
 
 Now, calculate thetas by re-running ANGSD with ```-doThetas 1```. Use ```-fold 1``` for the folded SFS. We supply priors with ```-pest``` using the SFS file produced in the previous step.
 
-````
+```
 FILTERS="-minMapQ 20 -minQ 20 -sites sites_bfv3_forDxy_maf00_noZ.txt -anc kiwi_ref_genome.fna"
 TODO="-doThetas 1 -doSaf 1 -fold 1"
 angsd -b BAM__australis__Haast.txt -GL 1 -P 1 -pest BAM__australis__Haast.sfs $FILTERS $TODO -out australis__Haast
