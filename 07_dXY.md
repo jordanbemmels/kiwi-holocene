@@ -58,7 +58,7 @@ To adjust the windowed estimates, first we need to calculate the number of total
 Rscript countSitesPerWindow_git.R
 ```
 
-Now, we are ready to finally adjust the windowed estimates, using the script [adjustSlidingWindowDxy_countSites_50kbp_step25kbp_git.R](https://github.com/jordanbemmels/kiwi-holocene/blob/main/adjustSlidingWindowDxy_countSites_50kbp_step25kbp_git.R), and the total number of sites per window just calculated above in ```FST_DIRECTORY/aHaast_aNorthFiordland.win50k_step25k.countSites.txt``` (specified within the script).
+Now, we are ready to finally adjust the windowed estimates, using the script [adjustSlidingWindowDxy_countSites_50kbp_step25kbp_git.R](https://github.com/jordanbemmels/kiwi-holocene/blob/main/adjustSlidingWindowDxy_countSites_50kbp_step25kbp_git.R), and the total number of sites per window just calculated above in ```FST_DIRECTORY/aHaast_aNorthFiordland.win50k_step25k.countSites.txt``` (specified within the script). The two command-line options here are the name of the input file and the name of the output file, respectively.
 
 ```
 Rscript adjustSlidingWindowDxy_countSites_50kbp_step25kbp_git.R aHaast_aNorthFiordland_Dxy_win50k_step25k.txt aHaast_aNorthFiordland_Dxy_win50k_step25k_countSites_adj.txt
