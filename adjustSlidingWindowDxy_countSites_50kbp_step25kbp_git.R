@@ -1,5 +1,6 @@
 # code is to adjust the estimates of dXY (sum of all individual variant sites) relative to the total number of sites (variant + invariant) in each sliding window;
 
+# usage: Rscript adjustSlidingWindowDxy_countSites_50kbp_step25kbp_git.R input_filename output_filename
 args <- commandArgs(trailingOnly = T);
 infile = args[1];
 outfile = args[2];
