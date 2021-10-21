@@ -19,7 +19,7 @@ angsd -i australis__Haast__KW36__RA0997_sorted.bam -GL 1 -P 1 -minMapQ 20 -minQ 
 misc/realSFS australis__Haast__KW36__RA0997.saf.idx > australis__Haast__KW36__RA0997.sfs
 ```
 
-For a single individual, a folded SFS has only two entries, corresponding to homozygotes and heterozygotes. The estimate of Ho is thus the second number in the output file australis__Haast__KW36__RA0997.sfs divided by the total number of sites (the sum of all the numbers, i.e., the sum of homozygotes and heterozygotes):
+For a single individual, a folded SFS has only two entries, corresponding to homozygotes and heterozygotes. The estimate of Ho is thus the second number in the output file ```australis__Haast__KW36__RA0997.sfs``` divided by the total number of sites (the sum of all the numbers, i.e., the sum of homozygotes and heterozygotes):
 
 ```
 # R script
