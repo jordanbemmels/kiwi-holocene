@@ -41,11 +41,18 @@ sqlite3 kiwi_UCE.sqlite
 .nullvalue .
 .tables # prints which tables are in the database
 SELECT * FROM aRowi_ref LIMIT 10; # prints the first 10 lines plus column names of aRowi_ref table
-	# result of this command, column names only: id  score  name1  strand1  zstart1  end1  length1  name2  strand2  zstart2  end2  length2  diff  cigar  identity  percent_identity  continuity  percent_continuity  coverage  percent_coverage
-	# the .lastz.clean file is the same, except is missing the "id" column
+# result of this command, column names only: id  score  name1  strand1  zstart1  end1  length1  name2  strand2  zstart2  end2  length2  diff  cigar  identity  percent_identity  continuity  percent_continuity  coverage  percent_coverage
+# the .lastz.clean file is the same, except is missing the "id" column
 ```
 
-We need to convert the matches from the  output file ```uce-5k-probes.fasta_v_aRowi_ref.lastz.clean``` into a format ANGSD can use, such as an ANGSD regions file. When performing this conversion, note that phyluce defines site positions using a zero-origin half-open system, whereas ANGSD uses a one-indexed closed system, so we need to account for that in the conversion. We will also retain 1,000-kbp flanking regions on either side of the UCE locus. If any separate UCEs ± 1000-kbp flanking regions end up overlapping, then should be merged into a single larger locus. Perform the conversion taking these considerations into account using the script [convertLastzToAngsdRegions_git.R]().
+We need to convert the matches from the  output file ```uce-5k-probes.fasta_v_aRowi_ref.lastz.clean``` into a format ANGSD can use, such as an ANGSD regions file. When performing this conversion, note that phyluce defines site positions using a zero-origin half-open system, whereas ANGSD uses a one-indexed closed system, so we need to account for that in the conversion. We will also retain 1,000-bp flanking regions on either side of the UCE locus. If any separate UCEs ± 1000-bp flanking regions end up overlapping, then should be merged into a single larger locus. We should also remove any UCE positions on the Z-chromosome. Scaffolds corresponding to the Z-chromosome were identified [previously](https://github.com/jordanbemmels/kiwi-holocene/blob/main/01_Identify_Zchr_scaffolds.md). Perform the conversion taking these considerations into account using the script [convertLastzToAngsdRegions_git.R](https://github.com/jordanbemmels/kiwi-holocene/blob/main/convertLastzToAngsdRegions_git.R).
+
+```
+Rscript convertLastzToAngsdRegions.R
+```
+
+The input files are specified within the script. There are several output files produced corrseponding to UCE loci with different lengths of flanking regions. We are interested in those with 1000-bp flanking regions, which are called ```aRowi_ref_UCEs_plus_2x1000bp.txt```.
+
 
 
 
