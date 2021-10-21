@@ -1,3 +1,5 @@
+# Script is to combine the number of sites per 5-kbp window (previously calculated) into the number of sites per 50-kbp window. Only needs to be done once for a given population pair (here, aHaast and aNorthFiordland are selected), then the outfile can be reused for all possible population pairs, assuming the exact same set of sites is used.
+
 sites <- read.table("allSites_filtered_5kbpWindow_startPos1.txt", sep = "\t", header = T, stringsAsFactors = F);
 
 # LOAD FILE;
