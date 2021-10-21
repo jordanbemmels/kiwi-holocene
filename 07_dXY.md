@@ -55,11 +55,11 @@ global dXY = 1717128.07028095 / 803652424 = 0.00214 for this particular populati
 To adjust the windowed estimates, first we need to calculate the number of total sites (variant + invariant) per 50-kbp window. We already have [previously](https://github.com/jordanbemmels/kiwi-holocene/blob/main/03_Create_SNP_whitelists.md) calculated the number of sites per 5-kbp window in Whitelist 02 (which was done for modularity so that we could use any window size we wanted that is a multiple of 5kbp). To combine the 5-kbp windows into 50-kbp windows, use the script [countSitesPerWindow_git.R](https://github.com/jordanbemmels/kiwi-holocene/blob/main/countSitesPerWindow_git.R). Again, we will match to the the Fst windows as a template (```FST_DIRECTORY/aHaast_aNorthFiordland.win50k_step25k.txt```). Note that this only needs to be done once (not repeated for every possible population pair) assuming that the same sites are used for all population pairs. The output file is ```FST_DIRECTORY/aHaast_aNorthFiordland.win50k_step25k.countSites.txt```.
 
 ```
-Rscript countSitesPerWindow_git.R aHaast_aNorthFiordland_Dxy_win50k_step25k.txt aHaast_aNorthFiordland_Dxy_win50k_step25k_countSites_adj.txt
+Rscript countSitesPerWindow_git.R
 ```
 
-Now, we are ready to finally adjust the windowed estimates, using the total number of sites just calculated above in ```FST_DIRECTORY/aHaast_aNorthFiordland.win50k_step25k.countSites.txt``` and the script [adjustSlidingWindowDxy_countSites_50kbp_step25kbp_git.R](https://github.com/jordanbemmels/kiwi-holocene/blob/main/adjustSlidingWindowDxy_countSites_50kbp_step25kbp_git.R).
+Now, we are ready to finally adjust the windowed estimates, using the script [adjustSlidingWindowDxy_countSites_50kbp_step25kbp_git.R](https://github.com/jordanbemmels/kiwi-holocene/blob/main/adjustSlidingWindowDxy_countSites_50kbp_step25kbp_git.R), and the total number of sites per window just calculated above in ```FST_DIRECTORY/aHaast_aNorthFiordland.win50k_step25k.countSites.txt``` (specified within the script).
 
 ```
-Rscript adjustSlidingWindowDxy_countSites_50kbp_step25kbp_git.R
+Rscript adjustSlidingWindowDxy_countSites_50kbp_step25kbp_git.R aHaast_aNorthFiordland_Dxy_win50k_step25k.txt aHaast_aNorthFiordland_Dxy_win50k_step25k_countSites_adj.txt
 ```
