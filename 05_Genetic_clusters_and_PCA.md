@@ -20,9 +20,21 @@ Run PCAngsd with the number of clusters determined automatically by the program 
 python pcangsd.py -beagle genolike_maf0136_10kbp_noZ_52ind.beagle.gz -admix -o maf0136_min0144_52ind_eAuto -minMaf 0.0144 -threads 4
 ```
 
-The outfile ```maf0136_min0144_52ind_eAuto.admix.9.Q``` contains the proportion membership of each individual in each of the clusters. The automatically selected number of clusters (K) was K = 9 clusters.
+The outfile ```maf0136_min0144_52ind_eAuto.admix.9.Q``` contains the proportion membership of each individual in each of the genetic clusters. The automatically selected number of clusters (K) was K = 9 clusters. This file is useful for creating [STRUCTURE](https://web.stanford.edu/group/pritchardlab/structure.html)-like plots.
 
-We can also manually set the number of clusters and re-run the analysis. This is done using the -e parameter, set to 1 less than the number of clusters desired. For example, to set the clusters manually to K = 5 then use -e 4, and to set to K = 11 then use -e 10
+The outfile ```maf0136_min0144_52ind_eAuto.cov``` contains the covariance matrix. This file is useful for Principal Component Analysis (PCA). To compute the eigenvalues and eigenvectors, open the file in *R* and use the ```eigen()``` command; see also the PCAngsd [tutorial](http://www.popgen.dk/software/index.php/PCAngsdTutorial). 
+
+```
+# open R
+cov <- read.table("maf0136_min0144_52ind_eAuto.cov", header = F, sep = " ", stringsAsFactors = F);
+cov <- as.matrix(cov);
+cov.eigen <- eigen(cov);
+plot(cov.eigen$vectors[ , 1:2]);
+```
+
+# Manual selection of the number of clusters
+
+We can also manually set the number of clusters and re-run the analysis. This is done using the -e parameter, set to 1 less than the number of clusters desired. For example, to set the clusters manually to K = 5 then use -e 4, and to set to K = 11 then use -e 10. These values are chosen to represent the number of named species, and the number of [previously recognized](https://doi.org/10.1073/pnas.1603795113) lineages, respectively.
 
 ```
 python pcangsd.py -beagle genolike_maf0136_10kbp_noZ_52ind.beagle.gz -admix -o maf0136_min0144_52ind_e4 -minMaf 0.0144 -e 4 -threads 4
