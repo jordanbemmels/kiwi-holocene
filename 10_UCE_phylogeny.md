@@ -51,8 +51,17 @@ We need to convert the matches from the  output file ```uce-5k-probes.fasta_v_aR
 Rscript convertLastzToAngsdRegions.R
 ```
 
-The input files are specified within the script. There are several output files produced corrseponding to UCE loci with different lengths of flanking regions. We are interested in those with 1000-bp flanking regions, which are called ```aRowi_ref_UCEs_plus_2x1000bp.txt```.
+The input files are specified within the script. There are several output files produced corrseponding to UCE loci with different lengths of flanking regions. We are interested in those with 1000-bp flanking regions, so the relevant outfile is ```aRowi_ref_UCEs_plus_2x1000bp.txt```.
 
+## Identify SNPs and call genotypes in ANGSD
+
+We will use ANGSD to identify SNPs and call genotypes the UCE ± 1000-bp regions specified with ```-rf aRowi_ref_UCEs_plus_2x1000bp.txt```, corresponding to the file we just generated. We are also requiring sequencing data for all 52 individuals (```-minInd 52```), only calling biallelic SNPs (```-SNP_pval 0.01 -rmTriallelic 0.01```), and implementing a minimum minor allele frequency (MAF) of (2 / 2\*52) = 0.0192, which gets rid of singletons by requiring at least two allele copies. This minimum MAF is different than in some previous analyses with ANGSD where we required only 1.5 allele copies due to ANGSD's probabilistic genotype calling framework, but here we increased it to 2 allele copies since we are actually calling genotypes and have half an allele copy. To account for high uncertainty (especially for sites with low depth for particular individuals), we only call genotypes with posterior probaiblity greater than 0.99 (```-postCutoff 0.99```).
+
+```
+FILTERS="-minMapQ 20 -minQ 20 -postCutoff 0.99 -minInd 52 -minMAF 0.0192 -SNP_pval 0.01 -rmTriallelic 0.01 -rf aRowi_ref_UCEs_plus_2x1000bp.txt"
+TODO="-doGeno 5 -dopost 1 -doMajorMinor 1 -doMAF 1 -doBCF 1 -doCounts 1"
+angsd -b BAM_FILES_LIST_52ind.txt -GL 1 -P 1 $FILTERS $TODO -out UCEs_plus_2x1000bp_noOG_52ind_maf0192
+```
 
 
 
