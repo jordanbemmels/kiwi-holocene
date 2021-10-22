@@ -1,6 +1,6 @@
 # Divergence dating with SNAPPER
 
-A quick time-calibrated phylogeny with divergence times can be estimated from SNPs from our whole-genome data using [SNAPPER](https://github.com/ForBioPhylogenomics/tutorials/blob/main/divergence_time_estimation_with_snp_data/README.md), a package add-on within [Beast2](http://www.beast2.org/). Note that robust divergence times in kiwi have previously been estimated with SNPs from genotyping-by-sequencing data plus mtDNA ([Weir et al. (2016)](https://doi.org/10.1073/pnas.1603795113)), using a coalescent approach and a much more detailed model allowing different population sizes and gene flow between lineages.
+A quick time-calibrated phylogeny with divergence times can be estimated from SNPs from our whole-genome data using [SNAPPER](https://github.com/ForBioPhylogenomics/tutorials/blob/main/divergence_time_estimation_with_snp_data/README.md), a package add-on within [Beast2](http://www.beast2.org/). Note that robust divergence times in kiwi have previously been estimated with SNPs from genotyping-by-sequencing data plus mtDNA ([Weir et al. 2016](https://doi.org/10.1073/pnas.1603795113)), using a coalescent approach and a much more detailed model allowing different population sizes and gene flow between lineages.
 
 Weir JT, Haddrath O, Robertson HA, Colbourne RM, Baker AJ. 2016 Explosive ice age diversification of kiwi. Proc. Natl. Acad. Sci. U. S. A. 113, E5580–E5587.
 
