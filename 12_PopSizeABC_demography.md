@@ -173,7 +173,7 @@ Once the ```stat_from_vcf.py``` file is prepared, we are ready to run it on each
 python2 comp_stat1/stat_from_vcf.py aHaast > terminalOutput_aHaast.txt
 ```
 
-The outfile with summary statistics will have the extension ```.stat```. If you want to change the outfile to something specific, you can modify the ```# print the result``` section of ```stat_from_vcf.py```.
+The outfile with summary statistics will have the extension ```.stat```. If you want to change the outfile to some specific name, you can modify the ```# print the result``` section of ```stat_from_vcf.py```. For example, my outfile is named ```aHaast_n10_mac1_macld1_v8_0.stat```.
 
 ## Generate simulated data
 
