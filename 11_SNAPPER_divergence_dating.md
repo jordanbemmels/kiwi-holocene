@@ -45,9 +45,31 @@ oKapiti	owenii__Kapiti__KW24__O20581
 rOkarito	rowi__Okarito__KW32__R32934
 ```
 
-Finally, create an input .xml file for SNAPPER, using the ruby script ```snapp_prep.rb``` that is [distributed](https://github.com/mmatschiner/snapp_prep) with SNAPP / SNAPPER. We specify that we want a SNAPPER and not a SNAPP analysis with ```-a SNAPPER```; provide our input VCF (```-v```), constraints (```-c```), and population map (```-t```) files; use a random sample of 1,000 SNPs (```-m 1000```); set the MCMC chain length to 2,000,000 (```-l 2000000```); and specify the output file name (```-x```).
+Finally, create an input .xml file for SNAPPER, using the [Ruby](https://www.ruby-lang.org/en/) script ```snapp_prep.rb``` that is [distributed](https://github.com/mmatschiner/snapp_prep) with SNAPP / SNAPPER. We specify that we want a SNAPPER and not a SNAPP analysis with ```-a SNAPPER```; provide our input VCF (```-v```), constraints (```-c```), and population map (```-t```) files; use a random sample of 1,000 SNPs (```-m 1000```); set the MCMC chain length to 2,000,000 (```-l 2000000```); and specify the output file name (```-x```).
 
 ```
 ruby snapp_prep.rb -a SNAPPER -v kiwi11ind_maf00.bcf -t snapper_pops_11ind.txt -c snapper_kiwiCrownConstraints.txt -m 1000 -l 2000000 -x snapper_11ind_m1K_l2M.xml
+```
+
+Now, we are ready to run SNAPPER. The settings are all already specified in the .xml file.
+
+```
+beast/bin/beast -threads 23 snapper_11ind_m1K_l2M.xml
+```
+
+Repeat the Beast2 command for 5 replicate runs (in different directories), and we will check each for convergence and combine the output of the 5 individual runs below.
+
+## Post-processing of individual runs
+
+Population size (theta) is not printed to the SNAPPER output by defalt. Add theta using the ```add_theta_to_log.rb``` script that is [distributed](https://github.com/mmatschiner/snapp_prep) with SNAPP / SNAPPER. We must provide the generation time with ```-g```. The generation time for kiwi was estimated to be 19.1357 years (see published manuscript text).
+
+```
+ruby add_theta_to_log.rb -l snapper.log -t snapper.trees -g 19.1357 -o snapper_w_popsize.log
+```
+
+We also want to know how much support there is for the branching pattern. We can quantify the posterior probabilities of clades on the maximum clade credibility tree using the [TreeAnnotator](https://www.beast2.org/treeannotator/) add-on for Beast2. Set the burn-in to 10% (```-burnin 10```).
+
+```
+beast/bin/treeannotator -burnin 10 -heights mean snapper.trees snapper_maxCladeCredibility.tree
 ```
 
