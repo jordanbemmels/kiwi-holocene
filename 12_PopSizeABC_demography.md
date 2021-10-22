@@ -101,9 +101,9 @@ aHaast australis__Haast__KW39__RA0921_sorted 0 0 0 -999
 aHaast australis__Haast__KW40__RA0201_sorted 0 0 0 -999
 ```
 
-## Calculate summary statistics on empirical data
+## Set up stat_from_vcf.py file to calculate summary statistics
 
-Calcultion of summary statistics is done using the ```stat_from_vcf.py``` file. Note that this script contains an extensive parameters section followed by the actual code. A few changes to the code have already been described above. Here, I will provide text indicating how the ```parameters``` section was specified for the kiwi project, organized by the different subsections. The same parameters can be used for any kiwi population.
+Calcultion of summary statistics is done using the ```stat_from_vcf.py``` file. Note that this script contains an extensive parameters section followed by the actual code (and thus I cannot provide a full example as the code is not mine to distribute). However, a few changes to the code section have already been described above. Here, I will provide text indicating how the ```parameters``` section was specified for the kiwi project, organized by the different subsections. The same parameters can be used for any kiwi population.
 
 #### General parameters
 
@@ -134,7 +134,7 @@ print times
 print ""
 ```
 
-This section controls the number of time windows for which population sizes will be estimated, and their ages and lengths. We choose 15 windows, with the oldest time window starting at 622 generations (~11.9 ka for kiwi), with a rate parameter of a=0.09 for adjusting the relative size of windows. See [Boitard et al. 2016](https://doi.org/10.1371/journal.pgen.1005877) for more details. These values were set in order to give a reasonable number of windows with breakpoints roughly corresponding to important historical events of relevance to kiwi.
+This section controls the number of time windows for which population sizes will be estimated, and their ages and lengths. We choose 15 windows, with the oldest time window starting at 622 generations (~11.9 ka for kiwi, assuming a generation time of 19.1357 years; see manuscript), with a rate parameter of a=0.09 for adjusting the relative size of windows. See [Boitard et al. 2016](https://doi.org/10.1371/journal.pgen.1005877) for more details. These values were set in order to give a reasonable number of windows with breakpoints roughly corresponding to important historical events of relevance to kiwi.
 
 Boitard S, Rodríguez W, Jay F, Mona S, Austerlitz F. 2016 Inferring population size history from large samples of genome-wide molecular data - an Approximate Bayesian Computation approach. PLoS Genet. 12, 1–36.
 
@@ -164,3 +164,22 @@ Here, we allow up to 5% error relative to the target distance in order to find S
 #### IBS statistics parameters
 
 No changes needed and in fact we do not use IBS summary statistics (see Boitard et al. 2016) so this section is irrelevant.
+
+## Calculate summary statistics on empirical data
+
+Once the ```stat_from_vcf.py``` file is prepared, we are ready to run it on each of the populations. Here is an example for aHaast.
+
+```
+python2 comp_stat1/stat_from_vcf.py aHaast > terminalOutput_aHaast.txt
+```
+
+The outfile with summary statistics will have the extension ```.stat```. If you want to change the outfile to something specific, you can modify the ```# print the result``` section of ```stat_from_vcf.py```.
+
+## Generate simulated data
+
+
+
+
+
+
+
