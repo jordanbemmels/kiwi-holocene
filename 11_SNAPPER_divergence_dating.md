@@ -73,3 +73,30 @@ We also want to know how much support there is for the branching pattern. We can
 beast/bin/treeannotator -burnin 10 -heights mean snapper.trees snapper_maxCladeCredibility.tree
 ```
 
+The output files can be inspected using different visualization programs:<br>
+  ```snapper_w_popsize.log``` -> [Tracer](https://www.beast2.org/tracer-2/)<br>
+  ```snapper.trees``` -> [DensiTree](https://www.cs.auckland.ac.nz/~remco/DensiTree/)<br>
+  ```snapper_maxCladeCredibility.tree``` -> [FigTree](http://tree.bio.ed.ac.uk/software/figtree/)
+
+In particular, for each run we should check convergence with the .log file in Tracer, with the burn-in set to 10%. Visually check for convergence plus aim for effective sample size (ESS) values >200 for each run. If this is not achieved, try re-running with a longer MCMC chain.
+
+## Combine runs for final result
+
+If each of the individual runs have converged, we can combine them into a single final result, discarding the first 10% as burn-in. Use the provided script [combine_snapper_runs_git.R](https://github.com/jordanbemmels/kiwi-holocene/blob/main/combine_snapper_runs_git.R). Parameters can be changed within the *R* script if needed, but by default are set to the values corresponding to the analyses described above.
+
+```
+Rscript combine_snapper_runs_git.R
+```
+
+The output file are ```snapper_combined_11ind_m1K_l10M.log``` and ```snapper_combined_11ind_m1K_l10M.trees```.
+
+Now, repeat the command from above to get the maximum clade credibility tree, this time for the combined dataset. However, change the burnin to zero (```-burnin 0```) because we have already removed the first 10% of each individual run prior to combining.
+
+```
+beast/bin/treeannotator -burnin 0 -heights mean snapper_combined_11ind_m1K_l10M.trees snapper_combined_11ind_m1K_l10M_maxCladeCredibility.tree
+```
+
+As above, visually check for convergence and aim for an ESS (viewed in Tracer) of >1000 on the combined runs.
+
+
+ 
