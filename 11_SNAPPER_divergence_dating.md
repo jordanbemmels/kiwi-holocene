@@ -28,6 +28,26 @@ For dating, SNAPPER requires a constraints file. We will constrain the timing of
 lognormal(0,5.96,0.33)	crown	aHaast,aNorthFiordland,aSouthFiordland,aStewartIsland,hHaastii,mCoromandel,mEastern,mNorthland,mTaranaki,oKapiti,rOkarito
 ```
 
+Next, create an input population map file ```snapper_pops_11ind.txt```. This file lists all the individuals and what lineage ("species") they belong to. Here, we only have one individual per lineage. The contents of this file are as follows:
 
+```
+species	individual
+aHaast	australis__Haast__KW36__RA0997
+aNorthFiordland	australis__NorthFiordland__KW41__R32961
+aSouthFiordland	australis__SouthFiordland__KW50__RA0202
+aStewartIsland	australis__StewartIsland__KW51__RA0891
+hHaastii	haastii__haastii__KW26__CD830
+mCoromandel	mantelli__Coromandel__KW09__R32852
+mEastern	mantelli__Eastern__KW11__NIBKOpo1
+mNorthland	mantelli__Northland__KW04__41
+mTaranaki	mantelli__Taranaki__KW18__kiwiCarcass1
+oKapiti	owenii__Kapiti__KW24__O20581
+rOkarito	rowi__Okarito__KW32__R32934
+```
 
+Finally, create an input .xml file for SNAPPER, using the ruby script ```snapp_prep.rb``` that is [distributed](https://github.com/mmatschiner/snapp_prep) with SNAPP / SNAPPER. We specify that we want a SNAPPER and not a SNAPP analysis with ```-a SNAPPER```; provide our input VCF (```-v```), constraints (```-c```), and population map (```-t```) files; use a random sample of 1,000 SNPs (```-m 1000```); set the MCMC chain length to 2,000,000 (```-l 2000000```); and specify the output file name (```-x```).
+
+```
+ruby snapp_prep.rb -a SNAPPER -v kiwi11ind_maf00.bcf -t snapper_pops_11ind.txt -c snapper_kiwiCrownConstraints.txt -m 1000 -l 2000000 -x snapper_11ind_m1K_l2M.xml
+```
 
