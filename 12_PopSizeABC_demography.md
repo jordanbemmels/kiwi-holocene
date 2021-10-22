@@ -12,7 +12,60 @@ Add hashes (```#```) at the beginning of the lines to comment out the entire if-
 
 #### Modifications to stat_from_vcf.py
 
-The ```parameters``` section needs to be updated to be relevant to kiwi. The parameters section looks as follows:
+The ```parameters``` section needs to be updated to be relevant to kiwi. This will be described further below in a subsequent section, when we are describing how to develop and set up the models for kiwi.
+
+However, there is one generic change to the calculations performed in the parameters section that will be described here: the calculation of *d* for the final distance bin (oldest time window / shortest physical linkage distance) is changed to ```d=1/(2*r*t)```, to correspond with the same formula used for all the other distance bins other than the final one. This is instead of the default code ```d=10**8/(2*t)``` which fixes the recombination rate at 1x10e-8 rather than using the actual pre-defined recombination rate *r* for the final distance bin. This change is also implemented separately in the ```simul_data.py``` script for consistency with the simulations. To make this change:
+
+```
+### OLD LINE 58
+d=10**8/(2*t)
+
+### NEW LINE
+d=1/(2*r*t)
+```
+
+In addition, under the ```the programm``` section (sic), there are two changes.
+
+First is to process *all* scaffolds (not only the first two scaffolds):
+
+```
+### OLD LINES 90 [...] 93
+for chro in range(1,2):
+    [...]
+    infile_vcf='../cattle_data/Chr'+str(chro)+'.vcf.gz'
+
+### NEW LINES
+all_chromo=os.listdir('kiwi_data/splitVCF/'+pop) # this allows processing all VCF files in the specified directory with this path, so that all scaffolds can be included
+for chro in range(len(all_chromo)):
+    [...]
+    infile_vcf='kiwi_data/splitVCF/'+pop+'/'+all_chromo[chro]
+```
+
+Second is to ensure that we read the kiwi pedigree, not the default cattle pedigree.
+
+```
+### OLD LINES
+    IO.parsePedFile_nogeno('../cattle_data/indiv.ped',mydata)  
+
+### NEW LINES
+    IO.parsePedFile_nogeno('kiwi_data/kiwi_indiv.ped',mydata) # JBB there is only a single pedigree file for all kiwis across all populations
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+The parameters section looks as follows:
 
 ```
 #pop='populationName' # JBB edits - original way from example code of setting pop
@@ -55,31 +108,4 @@ print ""
 # IBS statistics parameters
 prob_list=[0.0001,0.001,0.01,0.1,0.25,0.5,0.75,0.9,0.99,0.999,0.9999] # quantiles used to summarize the distribution of IBS segment length
 size_list=[1] # number of diploid individuals that are used for to define IBS segments (several values can be concatenated)
-```
-
-Note that the calculation of *d* for the final distance bin (oldtest time window / shortest physical linkage distance) was changed to ```d=1/(2*r*t)``` (see line above beginning with ```d=1/(2*r*t) # JBB edits[...]```, to correspond with the same formula used for all the other distance bins. This is instead of the default method ```d=10**8/(2*t)``` which fixes the recombination rate at 1x10e-8 rather than using the actual recombination rate *r* for the final distance bin. This change is also implemented separately in the ```simul_data.py``` script for consistency with the simulations.
-
-The rest of the parameters are described .................in the simul_data section...............
-
-In addition to changing these parameters to be specific to the kiwi project, under the ```the programm``` section (sic), there are two changes.
-
-First is to process *all* scaffolds (not only two of them):
-
-```
-### OLD LINE 90
-for chro in range(1,2):
-
-### NEW LINES
-all_chromo=os.listdir('kiwi_data/splitVCF/'+pop) # this allows processing all VCF files in the specified directory with this path, so that all scaffolds can be included
-for chro in range(len(all_chromo)):
-```
-
-Second is to ensure that we read the kiwi pedigree, not the default cattle pedigree.
-
-```
-### OLD LINE 95
-    IO.parsePedFile_nogeno('../cattle_data/indiv.ped',mydata)  
-
-### NEW LINE
-    IO.parsePedFile_nogeno('kiwi_data/kiwi_indiv.ped',mydata) # JBB there is only a single pedigree file for all kiwis across all populations
 ```
