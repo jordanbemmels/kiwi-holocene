@@ -73,7 +73,7 @@ bgzip -c aHaast.vcf > aHaast.vcf.gz
 tabix -p vcf aHaast.vcf.gz
 ```
 
-To perform the split by scaffold, use the provided script ```splitVCFbyScaffold_git.R```. The script requires the installation of [bcftools](https://samtools.github.io/bcftools/). The two command-line arguments are the input file (a corresponding .vcf, .vcf.gz, and .tbi file are all required) and output directory names, respectively. For the aHaast population:
+To perform the split by scaffold, use the provided script [splitVCFbyScaffold_git.R](https://github.com/jordanbemmels/kiwi-holocene/blob/main/PopSizeABC/splitVCFbyScaffold_git.R). The script requires the installation of [bcftools](https://samtools.github.io/bcftools/). The two command-line arguments are the input file (a corresponding .vcf, .vcf.gz, and .tbi file are all required) and output directory names, respectively. For the aHaast population:
 
 ```
 Rscript splitVCFbyScaffold.R aHaast.vcf aHaast
@@ -103,7 +103,7 @@ aHaast australis__Haast__KW40__RA0201_sorted 0 0 0 -999
 
 ## Set up stat_from_vcf.py file to calculate summary statistics
 
-Calcultion of summary statistics is done using the ```stat_from_vcf.py``` file. Note that this script contains an extensive parameters section followed by the actual code (and thus I cannot provide a full example as the code is not mine to distribute). However, a few changes to the code section have already been described above. Here, I will provide text indicating how the ```parameters``` section was specified for the kiwi project, organized by the different subsections. The same parameters can be used for any kiwi population.
+Calculation of summary statistics is done using the ```stat_from_vcf.py``` file. Note that this script contains an extensive parameters section followed by the actual code (and thus I cannot provide a full example as the code is not mine to distribute). However, a few changes to the code section have already been described above. Here, I will provide text indicating how the ```parameters``` section was specified for the kiwi project, organized by the different subsections. The same parameters can be used for any kiwi population.
 
 #### General parameters
 
