@@ -96,3 +96,10 @@ cat *.bestTreeCollapsed > UCEs_plus_2x1000bp_52ind_RAx_genetrees_merge.tre
 
 ## Species tree estimation in ASTRAL-III
 
+Use ASTRAL-III to estimate a single species tree from the individual gene trees for each of the UCE loci. There are relatively few relevant options to specify. We are not performing bootstrapping, because the authors of ASTRAL-III showed that the native branch support values are more reliable than bootstrapping.
+
+```
+java -jar astral.5.7.7.jar -i UCEs_plus_2x1000bp_52ind_RAx_genetrees_merge.tre -o UCEs_plus_2x1000bp_52ind_RAx_speciestree.tre 2> UCEs_plus_2x1000bp_RAx.log
+```
+
+The output file ```UCEs_plus_2x1000bp_52ind_RAx_speciestree.tre``` contains branch support values and branch lengths. Although the internal branch lengths are meaningful, note that the terminal branch lengths are not meaningful in the case where terminal branches are represented by a single individual, and an arbitrary value is chosen.
