@@ -44,7 +44,7 @@ for chro in range(len(all_chromo)):
 Second is to ensure that we read the kiwi pedigree, not the default cattle pedigree.
 
 ```
-### OLD LINES
+### OLD LINE 95
     IO.parsePedFile_nogeno('../cattle_data/indiv.ped',mydata)  
 
 ### NEW LINES
