@@ -24,7 +24,7 @@ import sys
 import time
 import datetime
 import numpy as np
-import popgen_abc_v8_0 # JBB edits - also need to edit all instances of "popgen_abc" in code
+import popgen_abc
 import tarfile
 import os
 
@@ -41,7 +41,7 @@ batch=sys.argv[4] # batch so we can run in parallel with different outfile names
 ################################################
 
 # general parameters
-outfile_name='res/v8_0/simu/v8_0_batch'+batch+'_L'+str(L/1000000) # root of the output files # JBB add batch number for unique file name
+outfile_name='batch'+batch+'_L'+str(L/1000000) # root of the output files # JBB add batch number for unique file name
 #nb_rep=100 # number of simulated datasets # JBB original way of defining number of replicates not from command line
 #nb_seg=100 # number of independent segments in each dataset
 #L=4000000 # size of each segment, in bp.
@@ -68,8 +68,8 @@ print ""
 # JBB notes: recombination rate based on chicken is 2.271*(10**(-8)) [defaults for cattle data much lower at 0.1 to 0.5e-08], mutation rate calculated 2020/11/05 in Kiwi55_04.1_mutationRate.docx is 2.457542e-08 per generation [defaults for cattle data 1e-08]
 #r_min=0.7271*10**(-8) # lower bound for the per generation per bp recombination rate
 #r_max=7.271*10**(-8) # upper bound for the per generation per bp recombination rate
-r_fixed = 2.1*(10**(-8)) # JBB edits: for v6_0, fix recombination rate using the rate for rhea
-mmu=1.345868*10**(-8) # per generation per bp mutation rate # JBB: UPDATED FOR v8_0
+r_fixed = 2.1*(10**(-8)) # fix recombination rate using the rate for rhea
+mmu=1.345868*10**(-8) # per generation per bp mutation rate
 Nmin=1.3010 # lower bound for the population size in each time window (in log10 scale)
 Nmax=6.3010 # upper bound for the population size in each time window (in log10 scale)
 Nmin_anc=1.3010 # use different bounds for ancestral population min and max
@@ -105,7 +105,7 @@ nb_dist=len(interval_list)
 nb_prob=len(prob_list)
 nb_size=len(size_list)
 params=-np.ones(shape=[nb_rep,nb_times+2],dtype='float')
-results=-np.ones(shape=[nb_rep,nb_dist+nb_size*nb_prob+n/2+1+nb_dist],dtype='float') # missing statistic values will be set to -1. # JBB adds an additional "+ nb_dist" to also return in the results the number of SNPs for each distance bin, which is now returned when calling simul_stats_one_rep_macld from popgen_abc_v6_0.py
+results=-np.ones(shape=[nb_rep,nb_dist+nb_size*nb_prob+n/2+1],dtype='float')  # missing statistic values will be set to -1.
 									     # this mostly concerns LD statistics, because it is sometimes impossible to find SNP pairs in a given distance bin.
 print('Total number of statistics : '+str(nb_dist+nb_size*nb_prob+n/2+1)+'\n')
 
@@ -113,9 +113,9 @@ print('Total number of statistics : '+str(nb_dist+nb_size*nb_prob+n/2+1)+'\n')
 mu=mmu*np.ones([nb_rep])
 params[:,0]=mu
 #r=10**(np.random.uniform(low=np.log10(r_min),high=np.log10(r_max),size=nb_rep)) # JBB edits: originally it sampled on a regular scale [r_min, r_max], but I want it to sample on a log-10 scale, so I added the log transformation [log10()] and back-transformation [10**] here 
-r=r_fixed # JBB edits: for v6_0, we will fix recombination rate
+r=r_fixed # fix recombination rate
 params[:,1]=r
-# VERSION 7_0 (v7_0) - use the original PopSizeABC code, except that we have a different Nmax_anc than the default N_max for other time windows - we will allow this to be anything and to not depend on the multiplication factor;
+# EDIT FOR KIWI PROJECT use the original PopSizeABC code, except that we have a different Nmax_anc than the default N_max for other time windows - we will allow this to be anything and to not depend on the multiplication factor;
 for i in range(nb_times):
     if i==0:
         pop_size=10**(np.random.uniform(low=Nmin,high=Nmax,size=nb_rep))
@@ -139,7 +139,7 @@ for i in range(nb_rep):
     #print params[i,:]
     sys.stdout.flush()
     try:
-    	results[i,:]=popgen_abc_v8_0.simul_stats_one_rep_macld(outfile_name_2,i,nb_seg,L,n,times,params[i,:],interval_list,size_list,prob_list,L,mac=mac,mac_ld=mac_ld,save_msp=save_msp)
+    	results[i,:]=popgen_abc.simul_stats_one_rep_macld(outfile_name_2,i,nb_seg,L,n,times,params[i,:],interval_list,size_list,prob_list,L,mac=mac,mac_ld=mac_ld,save_msp=save_msp)
     except:
         print 'Problem with replicate', i+1
         pass
