@@ -193,7 +193,7 @@ python2 comp_stat1/simul_data_kiwi_git.py 4 100 2000 003
 
 Output files are ```batch003_L4_n10_s100.params``` and ```batch003_L4_n10_s100_mac1_macld1.stat```.
 
-# ABC analysis
+## ABC analysis
 
 Example *R* code for the ABC analysis of results is provided in [PopSizeABC/abc_kiwi_git.R](). Note that this was largely re-written based on the code distributed with PopSizeABC, to have greater control and flexibility.
 
