@@ -65,7 +65,6 @@ print times
 print ""
 
 # prior distributions
-# JBB notes: recombination rate based on chicken is 2.271*(10**(-8)) [defaults for cattle data much lower at 0.1 to 0.5e-08], mutation rate calculated 2020/11/05 in Kiwi55_04.1_mutationRate.docx is 2.457542e-08 per generation [defaults for cattle data 1e-08]
 #r_min=0.7271*10**(-8) # lower bound for the per generation per bp recombination rate
 #r_max=7.271*10**(-8) # upper bound for the per generation per bp recombination rate
 r_fixed = 2.1*(10**(-8)) # fix recombination rate using the rate for rhea
