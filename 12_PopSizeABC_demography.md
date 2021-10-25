@@ -188,7 +188,7 @@ Furthermore, Line 122 is edited so that adjacent time bins can vary by up to two
 To run the script (example for simulating 100 indpendent 4-Mb chromosomes, with 2000 replicates, batch number 003):
 
 ```
-python2 comp_stat1/simul_data_v8_0_kiwi.py 4 100 2000 003
+python2 comp_stat1/simul_data_kiwi_git.py 4 100 2000 003
 ```
 
 Output files are ```batch003_L4_n10_s100.params``` and ```batch003_L4_n10_s100.stat```.
