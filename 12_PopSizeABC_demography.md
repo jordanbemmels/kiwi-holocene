@@ -195,10 +195,18 @@ Output files are ```batch003_L4_n10_s100.params``` and ```batch003_L4_n10_s100_m
 
 # ABC analysis
 
-Example *R* code for the ABC analysis of results is provided in [PopSizeABC/abc_kiwi_git.R]().
+Example *R* code for the ABC analysis of results is provided in [PopSizeABC/abc_kiwi_git.R](). Note that this was largely re-written based on the code distributed with PopSizeABC, to have greater control and flexibility.
 
+The key line where the actual ABC parameter inference is performed in Line 134:
 
+```
+res.nnet_aHaast <- abc(obs_aHaast[ind_stat], params_reduced, sstat[ , ind_stat], tol = 0.001, method = "neuralnet", numnet = 100);
+```
 
+This performs neuralnet regression with a tolerance of 0.001 (retaining 500 out of 500,000 simulations), with 100 neural networks.
 
+There is also a cross-validation section to estimate the expected error in parameter inference, using 200 replicate. The key line for this is Line 164:
 
-
+```
+cv.res.nnet <- cv4abc(param = params_reduced, sumstat = sstat[ , ind_stat], tols = c(0.001), method = "neuralnet", statistic = "median",  nval = 200);
+```
