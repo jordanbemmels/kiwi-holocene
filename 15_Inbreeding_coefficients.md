@@ -26,7 +26,7 @@ An example is shown for a single individual, KW36:
 rohan --rohmu 5e-5 --tstv 3.08 --size 1500000 --auto autosomes_aRowi_1500kbp.txt -t 1 -o aHaast__KW36/aHaast__KW36 kiwi_ref_genome.fna australis__Haast__KW36__RA0997_sorted.bam
 ```
 
-The output file ```aHaast__KW36.summary.txt``` classifies the proportion of the genome into three categories: ROH, non-ROH, and unclassifiable. The inbreeding coefficient (F_ROH) is the proportion of classifiable segments that are in ROH (i.e., ignoring the unclassifiable portion of the genome).
+The output file ```aHaast__KW36.summary.txt``` classifies the proportion of the genome into three categories: ROH, non-ROH, and unclassifiable. The inbreeding coefficient (F_ROH) is the proportion in ROH (as reported, this value ignores unclassifiable segments so no adjustment is needed).
 
 Repeat the analysis for all individuals, as well as for all individuals with ```--size 5000000```. The two sets of analyses are used to calculate F_ROH_1.5 and F_ROH_5.0, respectively.
 
