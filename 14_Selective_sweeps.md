@@ -54,7 +54,7 @@ These lines also indicate the relevant parameters, which are defined under the s
 - ```sample_size``` is haploid sample size, set to 10
 - ```Ne``` is the initial population size, determined from the current PopSizeABC demography
 - ```length``` is the length of the chromosome to be simulated, set to 10 Mbp
-- ```recombinatin_rate``` and ```mutation_rate``` are fixed at the value used in previous simulations
+- ```recombination_rate``` and ```mutation_rate``` are fixed at the values used in previous simulations
 - ```demographic_events``` is set to match the population size changes defined by the current PopSizeABC demography
 
 The output of this script for each population would be 500 VCF files of simulated neutral data, each of which contains data for 20 independently simulated chromosomes, e.g.:
