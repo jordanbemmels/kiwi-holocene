@@ -73,7 +73,7 @@ bgzip -c aHaast.vcf > aHaast.vcf.gz
 tabix -p vcf aHaast.vcf.gz
 ```
 
-To perform the split by scaffold, use the provided script [splitVCFbyScaffold_git.R](https://github.com/jordanbemmels/kiwi-holocene/blob/main/PopSizeABC/splitVCFbyScaffold_git.R). The script requires the installation of [bcftools](https://samtools.github.io/bcftools/). The two command-line arguments are the input file (a corresponding .vcf, .vcf.gz, and .tbi file are all required) and output directory names, respectively. For the aHaast population:
+To perform the split by scaffold, use the provided script [PopSizeABC/splitVCFbyScaffold_git.R](https://github.com/jordanbemmels/kiwi-holocene/blob/main/PopSizeABC/splitVCFbyScaffold_git.R). The script requires the installation of [bcftools](https://samtools.github.io/bcftools/). The two command-line arguments are the input file (a corresponding .vcf, .vcf.gz, and .tbi file are all required) and output directory names, respectively. For the aHaast population:
 
 ```
 Rscript splitVCFbyScaffold.R aHaast.vcf aHaast
@@ -177,6 +177,25 @@ The outfile with summary statistics will have the extension ```.stat```, and be 
 
 ## Generate simulated data
 
+A PopSizeABC input file for data simulations (example is for populations with 5 individuals) is provided in [PopSizeABC/simul_data_kiwi_git.py](https://github.com/jordanbemmels/kiwi-holocene/blob/main/PopSizeABC/simul_data_kiwi_git.py).
+
+Note that the ```#general parameters```, ```# time windows```, and ```# LD statistics parameters``` settings are equivalent to those used to calculate sstats on the empirical data explained above.
+
+The new section ```# prior distributions``` has fixed recombination and mutation rates, and defines the bounds on the population sizes. See manuscript text for more details. Note that the code has been edited on Lines 74-75 and 126-128 so that the final time bin (ancestral population size) is independent of the second-to-last time bin, and can also have different priors.
+
+Furthermore, Line 122 is edited so that adjacent time bins can vary by up to two orders of magnitude, rather than the default one order of magnitude.
+
+To run the script (example for simulating 100 indpendent 4-Mb chromosomes, with 2000 replicates, batch number 003):
+
+```
+python2 comp_stat1/simul_data_v8_0_kiwi.py 4 100 2000 003
+```
+
+Output files are ```batch003_L4_n10_s100.params``` and ```batch003_L4_n10_s100.stat```.
+
+# ABC analysis
+
+Example *R* code for the ABC analysis of results is provided in [PopSizeABC/abc_kiwi_git.R]().
 
 
 
