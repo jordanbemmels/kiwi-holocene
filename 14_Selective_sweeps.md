@@ -65,4 +65,9 @@ aHaast_neutral_10M_500retained_20reps_scenario1.vcf
 [...]
 ```
 
-## Run RAiSD on neutral datasets
+## Run RAiSD on simulated datasets
+
+Run RAiSD on each of the 500 simulated neutral datasets using the same commands as above for the empirical datasets. The output will be 500 different sets of RAiSD output files, including a *RAiSD_Report* file for each of the 500 demographic scenarios. Each *RAiSD_Report* file contains 20 different chromosomes.
+
+To set the mu threshold for each population as in the manuscript, inspect the output for each of the 500 demographic scenarios, and retain the maximum mu value for each of the 20 simulated chromosomes. Discard the 5% of simulations (25 out of 500) resulting in the highest mean value of maximum mu (i.e., mean of the 20 simulated chromosomes). This leaves 475 scenarios x 20 chromosomes = 9,500 chromosomes remaining. The threshold is the 99th percentile of the maximum mu value observed across these 9,500 chromosomes. This value is chosen because it corresponds to ~1 false positive per 100 chromosomes. Each simulated chromosome is 10 Mbp, so that is ~1 false positive per 1,000 Mbp. The reference genome is ~1,144 Mbp, so the final expectation is 1144 Mbp x 1 outlier/1000 Mbp = 1.144 outliers, or 1.144 false positives due to demographic stochasiticty per population.
+
