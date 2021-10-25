@@ -4,7 +4,7 @@ Inbreeding coefficients are calculated for each individual from runs of homozygo
 
 ## Calculate transition:transvertion ratio for kiwi
 
-ROHan requires information on the transition/transvertion ratio. This can be estimated in [bcftoos](https://samtools.github.io/bcftools/) using the VCF files (.bcf) [previously generated](https://github.com/jordanbemmels/kiwi-holocene/blob/main/14_Selective_sweeps.md) as input for RAiSD. An example is shown for aHaast:
+ROHan requires information on the transition/transvertion ratio. This can be estimated in [bcftools](https://samtools.github.io/bcftools/) using the VCF files (.bcf) [previously generated](https://github.com/jordanbemmels/kiwi-holocene/blob/main/14_Selective_sweeps.md) as input for RAiSD. An example is shown for aHaast:
 
 ```
 bcftools stats aHaast.bcf | grep "TSTV"
