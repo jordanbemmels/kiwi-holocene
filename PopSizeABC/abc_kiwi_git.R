@@ -20,21 +20,18 @@ params <- read.table("combined__L4_n10_s100.params", sep = " ", header = F, stri
 nrow(sstat);
 nrow(params);
 
- # check the number of SNPs in the smallest bin, which will equal -1 if the simulation was not successful (according to how I set up the simulations);
-sum(sstat$V32 == -1);
-
 # check if there are any sstat rows with any NA values anywhere;
 sum(!(complete.cases(sstat)));
 
 ##### systemtically check every row – there may be some additional cases where insufficient sstats were generated;
 apply(sstat, 2, function(x) {sum(x == -1)});
 
-# from the above, in my empirical 2021/02/24 version of the data, there are 2 problematic examples where V45 and V20 do not have proper sstats - for all other columns the sstats are completed because there are no NAs above and no -1 (missing data) values;
+# from the above, in my empirical data, there were 2 problematic examples where columns V45 and V20 do not have proper sstats - for all other columns the sstats are completed because there are no NAs above and no -1 (missing data) values;
 # find these rows;
 sstat[sstat$V20 == -1, ];
 sstat[sstat$V45 == -1, ];
 # they are identical (makes sense, as V45 is the number of SNP pairs in the most ancient / smallest distance bin and V20 is the LD between those pairs, so of course if V45 is missing then V20 will also be missing);
-# NOTE: the column identities mentioned here may not match those when running example scripts from GitHub - users should adjust as necessary!;
+# IMPORTANT: the column identities mentioned here may not match those when running example scripts from GitHub - users should adjust the column names as necessary!;
 
 # remove these two rows from BOTH the params and sstat (very important to remove both consistently to maintain order of df);
 bad_rows <- which(sstat$V20 == -1);
@@ -97,7 +94,7 @@ apply(sstat, 2, function(x) {sum(is.na(x))});
 
 head(sstat);
 
-ind_stat <- 2:20; # IMPORTANT: USER MUST INSPECT AND SET THIS MANUALLY - MAY BE DIFFERENT THAN SHOWN HERE;
+ind_stat <- 2:20; # IMPORTANT: USER MUST INSPECT AND SET COLUMN INDICES MANUALLY - MAY BE DIFFERENT THAN SHOWN HERE;
 
 #########################
 #########################
@@ -115,7 +112,7 @@ ind_stat <- 2:20; # IMPORTANT: USER MUST INSPECT AND SET THIS MANUALLY - MAY BE 
 
 head(params);
 
-ind_param <- c(3:17); # IMPORTANT: USER MUST INSPECT AND SET THIS MANUALLY - MAY BE DIFFERENT THAN SHOWN HERE;
+ind_param <- c(3:17); # IMPORTANT: USER MUST INSPECT AND SET COLUMN INDICES MANUALLY - MAY BE DIFFERENT THAN SHOWN HERE;
 
 # note that these are all population sizes, and all need to be log10-transformed prior to use;
 
@@ -132,7 +129,7 @@ ind_param <- c(3:17); # IMPORTANT: USER MUST INSPECT AND SET THIS MANUALLY - MAY
 params_reduced <- params[ , ind_param];
 params_reduced <- log10(params_reduced);
 
-##### perform the parameter inference - note that there is no mnlogistic abc() method, so we have switched to loclinear;
+##### perform the parameter inference;
 
 res.nnet_aHaast <- abc(obs_aHaast[ind_stat], params_reduced, sstat[ , ind_stat], tol = 0.001, method = "neuralnet", numnet = 100);
 
@@ -156,7 +153,6 @@ summary(res.nnet_aHaast, print = F, intvl = 0.9)[6,]; # 95% quantile (NOT the 97
 ##### Cross-validation of ability to estimate parameters #####
 
 # see ?cv4abc() and note that this function can be used to select the appropriate tolerance rate for parameter inference;
-# JBB note: in the example tutorial and the default is "median", but we could set statistic = "mode" if we are using that for our main results instead;
 
 # we should use nnet as that is what is used in the main model;
 # res.nnet_aHaast <- abc(obs_aHaast[ind_stat], params_reduced, sstat[ , ind_stat], tol = 0.001, method = "neuralnet", numnet = 100);
