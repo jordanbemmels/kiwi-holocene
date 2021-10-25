@@ -14,12 +14,12 @@ pop_id = int(sys.argv[1]) # pop_id ranges from 1-11 for each of the 11 populatio
 #n_rep = int(sys.argv[2]) # the number of independent chromosomes to simulate # UPDATE: for 500retained, we will always be simulationg 1000 chromosomes (2x500 different parameter combinations)
 reps_per_param_set = 20 # 20reps version will simulate 20 replicates per each of the 500 retained demographic scenarios, and has the chromosome naming convention modified to be 1_1, 1_2, 1_3, ... 1_20, 2_1, 2_2, 2_3 ... etc., so that we can keep track for the scenario and replicate (scenario_replicate);
 
-##### Set up input data that will be the same across all populations, v8_0 #####
+##### Set up input data that will be the same across all populations #####
 
 n=10 # haploid sample size
 L=10000000 # size of each segment, in bp
-r_fixed = 2.1*(10**(-8)) # recombination rate used in v8_0
-mmu=1.345868*10**(-8) # per generation per bp mutation rate used in v8_0
+r_fixed = 2.1*(10**(-8)) # recombination rate
+mmu=1.345868*10**(-8) # per generation per bp mutation rate
 
 # time windows
 nb_times=15 # number of time windows
@@ -128,12 +128,7 @@ for i in range(len(popSizes)):
 
 names_allpops = ["aHaast", "aNorthFiordland", "aSouthFiordland", "aStewartIsland", "hHaastii", "mCoromandel", "mEastern", "mNorthland", "mTaranaki", "oKapiti", "rOkarito"]
 
-# this did not work for the 20reps version, when calling os.system it returned error code 32512;
-#concat_fileList = ' '.join(["sim_chr/temp_holding_dir/chr_rep" + str(sub1) + "_" + str(sub2) +".vcf" for sub1,sub2 in itertools.product(range(len(popSizes)), range(reps_per_param_set))]);
-#print concat_fileList
-#os.system("/home/0_PROGRAMS/bcftools-1.10.2/bcftools concat -o sim_chr/"+names_allpops[pop_id - 1]+"_neutral_10M_500retained_20reps.vcf "+concat_fileList)
-
-# instead, concatenate all the replicates for a single retained demographic scenario (we will have 500 total), then later we will need to modify the pipeline to run RAiSD on EACH of the 500 files, rather than a single RAiSD run across one gigantic concatenated dataset;
+# concatenate all the replicates for a single retained demographic scenario (we will have 500 total), then later we will need to run RAiSD on EACH of the 500 files, rather than a single RAiSD run across one gigantic concatenated dataset;
 os.system("mkdir "+"sim_chr/neutral_10M_500retained_20reps/");
 os.system("mkdir "+"sim_chr/neutral_10M_500retained_20reps/"+names_allpops[pop_id - 1]);
 for i in range(len(popSizes)):
