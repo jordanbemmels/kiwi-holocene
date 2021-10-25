@@ -28,11 +28,39 @@ There are several output files, but the most relevant one with mu-statistics at 
 
 We will use [msprime](https://github.com/tskit-dev/msprime/) to simulate neutral genomic datasets for comparison, using the demographic scenarios [previously](https://github.com/jordanbemmels/kiwi-holocene/blob/main/12_PopSizeABC_demography.md) estimated with PopSizeABC for each population. Then, we will re-run RAiSD on the neutral datasets. This will give us an expectation of the mu-statistic values we might expect due to neutral dynamics (i.e., population bottlenecks) alone, which can mimic the effects of selective sweeps.
 
-For each population, we will use the 500 retained simulations (regression-ajusted values, not raw values) from the ABC step of PopSizeABC. This was done previously in the [PopSizeABC/abc_kiwi_git.R](https://github.com/jordanbemmels/kiwi-holocene/blob/main/PopSizeABC/abc_kiwi_git.R) script on Line 213:
+For each population, we will use the 500 retained simulations (regression-adjusted values, not raw values) from the ABC step of PopSizeABC. A file with the population sizes for those 500 simulations was created previously in the [PopSizeABC/abc_kiwi_git.R](https://github.com/jordanbemmels/kiwi-holocene/blob/main/PopSizeABC/abc_kiwi_git.R) script on Line 213:
 
 ```
 write.table(retained_aHaast, "abc_output/retainedSims_adj/retainedSims_aHaast.txt", sep = "\t", quote = F, row.names = F, col.names = T);
 ```
 
+After we have this file, we are ready to simulate the neutral simulations. Do this using the [provided](https://github.com/jordanbemmels/kiwi-holocene/blob/main/simulateNeutralSNPs_10M_500retained_20reps_git.py) script ```simulateNeutralSNPs_10M_500retained_20reps_git.py``` (here, the command-line parameter ```1``` indicates to perform the simulation for the first population, which is aHaast):
 
+```
+python2 simulateNeutralSNPs_10M_500retained_20reps_git.py 1
+```
 
+Note that the above script cannot be run in parallel for multiple populations because temporary files with the same name may be overwritten, so please run different populations sequentially. To use the script, you would need to adjust the relative paths to input and output files given your particular file system.
+
+The key lines in the python script showing the msprime simulation, and then printing to a VCF outfile, are as follows:
+
+```
+tree_sequence = msprime.simulate(sample_size=n, Ne=N, length=L, recombination_rate=myrec, mutation_rate=mymut, demographic_events=mydemo)
+# [...]
+tree_sequence.write_vcf(vcf_file, ploidy=2) 
+```
+
+These lines also indicate the relevant parameters, which are defined under the section labelled ```##### Set up input data that will be the same across all populations #####```:
+- ```sample_size``` is haploid sample size, set to 10
+- ```Ne``` is the initial population size, determined from the current PopSizeABC demography
+- ```length``` is the length of the chromosome to be simulated, set to 10 Mbp
+- ```recombinatin_rate``` and ```mutation_rate``` are fixed at the value used in previous simulations
+- ```demographic_events``` is set to match the population size changes defined by the current PopSizeABC demography
+
+The output of this script for each population would be 500 VCF files of simulated neutral data, each of which contains data for 20 independently simulated chromosomes, e.g.:
+
+```
+aHaast_neutral_10M_500retained_20reps_scenario0.vcf
+aHaast_neutral_10M_500retained_20reps_scenario1.vcf
+[...]
+```
