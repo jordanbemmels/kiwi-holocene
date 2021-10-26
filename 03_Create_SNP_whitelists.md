@@ -1,4 +1,4 @@
-# Create whitelists of fitlered SNPs
+# Create whitelists of filtered SNPs
 
 These whitelists of filtered SNPs will be used in [ANGSD](http://www.popgen.dk/angsd/index.php/ANGSD) either directly (for analyses performed in ANGSD) or to print files in other formats to use for downstream applications. The SNP whitelists (01, 02, and 03) and the specific analyses they are used for are described in more details the supplementary methods of the publication.
 
