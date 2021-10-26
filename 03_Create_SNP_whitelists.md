@@ -98,7 +98,7 @@ Now we have available whitelists from Whitelist 01 to use for specific analyses:
 
 # WHITELIST 02
 
-Whitelist 02 describes creating input sets of SNPs for pi (nucleotide diversity) and dXY. For these calculations, filtering is different than above because we need two list of both VARIABLE and TOTAL sites. The two lists must be generated using exactly the same commands, but initial trials repeating whitelist 01 for TOTAL sites ran into difficulties, with the lists not being directly comparable due to different ways in which applying filters sequentially across multiple steps sometimes resulted in different behaviour for variable and non-variable sites. Instead, Whitelist 02 standardizes the commands and ensures that the filters for both sets used are exactly the same and applied in a straightforward way, and all at once, to get rid of the unwanted behaviour.
+Whitelist 02 describes creating input sets of SNPs for pi (nucleotide diversity) and dXY. For these calculations, filtering is different than above because we need two lists, containing VARIABLE and TOTAL sites, respectively. The two lists must be generated using exactly the same commands, but initial trials repeating whitelist 01 for TOTAL sites ran into difficulties, with the lists not being directly comparable due to different ways in which applying filters sequentially across multiple steps sometimes resulted in different behaviour for variable and non-variable sites. Instead, Whitelist 02 standardizes the commands and ensures that the filters for both sets used are exactly the same and applied in a straightforward way, and all at once, to get rid of the unwanted behaviour.
 
 ## Variable sites
 
