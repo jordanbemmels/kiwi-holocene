@@ -27,7 +27,7 @@ bcftools index Kiwi_11genomes.min5max21.vcf.gz
 
 ## Extract genes
 
-Coding sequence (CDS) sites are extracted using BCFtools. Importantly, the -M and --absent options should be set to avoid having missing data replaced with the reference allele (this requires bcftools version 1.11+).
+Coding sequence (CDS) sites are extracted using BCFtools. Importantly, the ```-M``` and ```--absent``` (```-a```) options should be set to avoid having missing data replaced with the reference allele (this requires bcftools version 1.11+).
 
 ```
 #create a consensus genome sequence for each sample
@@ -48,3 +48,17 @@ cat samples | parallel --colsep " " time /home/0_PROGRAMS/maker/bin/map_fasta_id
 #note if you had already indexed the fastas, you must now index them again
 ```
 
+Obtain a .bed file listing the location of each gene in the genome, using [BEDOPS](https://bedops.readthedocs.io/en/latest/). Critically, this must list the coordinates for the coding sequences (CDS), without the introns or untranslated regions, since we will need to be able to translate them straight into protein sequence.
+
+```
+#get BED files for each protein
+#loop through the list of genes. For each gene, look in the gff file for lines for the gene of interest, where column three indicates that that line pertains to the CDS. Then convert it to bed format.
+mkdir bed
+cat Aptrow.longest_RNA.txt | while read gene ; do grep "$gene" GCF_003343035.1/genomic.gff | awk '($3 == "CDS")' - | /home/0_PROGRAMS/bedops/bin/convert2bed -i gff - > bed/"$gene".bed ; done
+
+#flip the order of the exons for genes on the minus strand, so that they are in the correct order relative to the gene, not the chromosome.
+#first, get a file listing whether each gene is on the plus or minus strand
+cat Aptrow.longest_RNA.txt | while read gene ; do head -n 1 bed/"$gene".bed | cut -f 6 | xargs -I {} echo "$gene" {} >> strandedness ; done
+#reverse the order of the exons in the bed file for genes on the minus strand
+cat strandedness | while read gene strandedness ; do if [[ "$strandedness" == "-" ]]; then sort --numeric-sort --reverse -k 2 bed/"$gene".bed > temp && mv temp bed/"$gene".bed ; fi ; done
+```
