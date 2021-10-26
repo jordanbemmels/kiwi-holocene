@@ -1,5 +1,7 @@
 # Selection analyses with HyPhy
 
+# PART I: PREPARE CODING SEQUENCES IN KIWI AND OUTGROUPS
+
 Code for this section was developed by manuscript author Else Mikkelsen.
 Consolidation and minor edits by Jordan Bemmels.
 
@@ -48,7 +50,7 @@ cat samples | parallel --colsep " " time /home/0_PROGRAMS/maker/bin/map_fasta_id
 #note if you had already indexed the fastas, you must now index them again
 ```
 
-Detour: there are multiple isoforms available for some genes. Ideally, we might pick the most abundantly expressed isoform of each gene. We do not have that information for our species and we will choose the longest isoform of each gene instead. We already made a list of the longest isoforms for each gene annotated for Apteryx (Aptrow.longest_AA.txt). Use this list. It lists the protein names, so we need to translate these into a list of RNA names that will be used for the CDS sequences.
+Detour: there are multiple isoforms available for some genes. Ideally, we might pick the most abundantly expressed isoform of each gene. We do not have that information for our species and we will choose the longest isoform of each gene instead. We already made a list of the longest isoforms for each gene annotated for Apteryx (```Aptrow.longest_AA.txt```). Use this list. It lists the protein names, so we need to translate these into a list of RNA names that will be used for the CDS sequences.
 
 ```
 cd /home/0_GENOMES5/kiwi/0_data
@@ -92,4 +94,42 @@ cat samples | cut -f 2 -d " " | while read sample ; do time cat Aptrow.longest_R
 ```
 
 Now we have fasta files containing (unaligned) gene sequences for each annotated kiwi gene.
+
+## Transfer kiwi annotation to outgroups
+
+Use [Liftoff](https://github.com/agshumate/Liftoff) to transfer the kiwi annotation to outgroups, in order to find orthologous gene sequences in the outgroups.
+
+The outgroup reference genome info is saved in the filw ```palaeognathae_acessions.txt``` as follows (format: genome_accession_number genus species assembly_version_name):
+
+```
+GCA_013396415.1 Casuarius casuarius ASM1339641v1
+GCA_003342915.1 Crypturellus cinnamomeus cryCin1
+GCA_016128335.1 Dromaius novaehollandiae ZJU1.0
+GCA_003342835.1 Rhea pennata rhePen1
+```
+
+Liftoff takes a .gff file and maps its features onto another genome. Before beginning, filter the kiwi .gff file to retain only the longest isoform of each gene. Use this file (```GCF_003343035.1/Longest_CDS.gff```) to locate their putative orthologs in the outgroup taxa.
+
+```
+mkdir -p liftoff
+#First, run it once on just 1 sample to get the database file
+cat palaeognathae_acessions.txt | head -n 1 | parallel --colsep " " liftoff -g GCF_003343035.1/Longest_CDS.gff -dir liftoff/{1}_{4}_liftoff -o liftoff/{1}_{4}_liftoff.gff -u liftoff/{1}_{4}.unmapped_features.txt ncbi_dataset/data/{1}/{1}_{4}_genomic.fna kiwi_ref_genome.fna
+
+#now run for all the rest. use the newly-created *.gff_db instead of the gff in order to save time.
+cat palaeognathae_acessions.txt | tail -n +1 | parallel --colsep " " liftoff -db GCF_003343035.1/Longest_CDS.gff_db -dir liftoff/{1}_{4}_liftoff -o liftoff/{1}_{4}_liftoff.gff -u liftoff/{1}_{4}.unmapped_features.txt ncbi_dataset/data/{1}/{1}_{4}_genomic.fna kiwi_ref_genome.fna
+```
+
+Now that we have the annotations, we need to extract the protein and CDS sequences for each gene. For this task, we can use [gffread](https://github.com/gpertea/gffread). Liftoff did not polish the codon structure of the CDS's, so there are frameshifts that preclude directly translating them into AA sequence. To fix this, we can use [Transdecoder](https://github.com/TransDecoder/TransDecoder/wiki) to identify the longest open reading frame in each CDS and extract the corresponding protein sequence, which is what we will use to assign orthology.
+
+```
+mkdir -p transcriptome
+
+cat palaeognathae_acessions.txt | parallel --colsep " " gffread -x transcriptome/{1}_{4}.longest_CDS.fna -y transcriptome/{1}_{4}.longest_proteins.faa -g ncbi_dataset/data/{1}/{1}_{4}_genomic.fna liftoff/{1}_{4}_liftoff.gff
+
+mkdir transcriptome/transdecoder
+#get longest ORFs for each CDS (liftoff did not respect codon structure so the AA sequences are very frameshifted)
+cat palaeognathae_acessions.txt | parallel --colsep " " mkdir transcriptome/transdecoder/{1}_{4} ';' /home/0_PROGRAMS/TransDecoder-TransDecoder-v5.5.0/TransDecoder.LongOrfs -t transcriptome/{1}_{4}.longest_CDS.fna -m 30 -S --output_dir transcriptome/transdecoder/{1}_{4}
+export PERL5LIB=/home/0_PROGRAMS/TransDecoder-TransDecoder-v5.5.0/PerlLib
+cat palaeognathae_acessions.txt | parallel --colsep " " perl /home/0_PROGRAMS/TransDecoder-TransDecoder-v5.5.0/get_longest_ORF_per_transcript.pl transcriptome/transdecoder/{1}_{4}/longest_orfs.pep '>' transcriptome/transdecoder/{1}_{4}.faa #dont use the script copy in the util folder, and make sure to set PERL5LIB to point to where transdecoder has its perl modules
+```
 
