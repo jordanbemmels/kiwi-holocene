@@ -8,7 +8,7 @@ An example is provided here for the population aHaast (australis__Haast).
 
 ## Nucleotide diversity (pi)
 
-Generate a global estimate of the site frequency spectrum (SFS), using ```-fold 1``` to specify that the SFS is folded (i.e., it is unknown which allele is ancestral vs. derived). As input, use the sites file generated [previously]() from Whitelist 02 (```sites_bfv3_forDxy_maf00_noZ.txt```) for dXY.
+Generate a global estimate of the site frequency spectrum (SFS), using ```-fold 1``` to specify that the SFS is folded (i.e., it is unknown which allele is ancestral vs. derived). As input, use the sites file generated [previously](https://github.com/jordanbemmels/kiwi-holocene/blob/main/03_Create_SNP_whitelists.md) from Whitelist 02 (```sites_bfv3_forDxy_maf00_noZ.txt```) for dXY.
 
 ```
 FILTERS="-minMapQ 20 -minQ 20 -sites sites_bfv3_forDxy_maf00_noZ.txt -anc kiwi_ref_genome.fna"
