@@ -18,8 +18,8 @@ angsd -b BAM_FILES_LIST.txt -GL 1 -P 4 $FILTERS $TODO -out filter01
 
 Next, we want to exclude SNPs with depth greater than the 99th percentile of all SNPs, as these may be gene duplications or other problems. To determine what depth corresponds to the 99th percentile, simply open and inspect the output file ```filter01.depthGlobal``` containing the depth distribution. In our real kiwi data the max depth to include was 926.
 
-Also, exclude any SNPs with >75% heterozygosity, which also could be errors in alignment or assembly. To do this, we use the script 
-[HetMajorityProb.py](https://github.com/z0on/2bRAD_denovo/blob/master/HetMajorityProb.py) by Nate S. Pope. However, the default for this script is to calculate the probability that more than 50% of calls for a given site (the majority) are heterozygotes. To update the script to calculate the probability that more than 75% of the calls at a site are heterozygotes, we need to change line 25 in the script (current line number as of 2021/10/15):
+Also, exclude any SNPs with ≥75% heterozygosity, which also could be errors in alignment or assembly. To do this, we use the script 
+[HetMajorityProb.py](https://github.com/z0on/2bRAD_denovo/blob/master/HetMajorityProb.py) by Nate S. Pope. However, the default for this script is to calculate the probability that more than 50% of calls for a given site (the majority) are heterozygotes. To update the script to calculate the probability that at least 75% of the calls at a site are heterozygotes, we need to change line 25 in the script (current line number as of 2021/10/15):
 
 **OLD LINE:** ```utail_prob = pois_binom.pval(len(pr_heteroz)/2+1)```<br>
 **NEW LINE:** ```utail_prob = pois_binom.pval(int(len(pr_heteroz)*3/4))```
