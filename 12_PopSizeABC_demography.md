@@ -4,7 +4,7 @@ We will use [PopSizeABC](https://forge-dga.jouy.inra.fr/projects/popsizeabc) to 
 
 ## Modifications to PopSizeABC code
 
-PopSizeABC is written in python code. In the kiwi analysis, I made several modifications to the code. However, I do not have permissions to publicly share the core PopSizeABC code here (only example input files are shared below). Instead, for reproducibility of the kiwi project I will describe the changes that any user could also make to the default PopSizeABC code if desired.
+PopSizeABC is written in python code. In the kiwi analysis, I made several minor modifications to the code. However, I do not have permissions to publicly share the core PopSizeABC code here (only example input files are shared below). Instead, for reproducibility of the kiwi project I will describe the changes that any user could also make to the default PopSizeABC code if desired.
 
 #### Modifications to gwas/summary_stat.py
 
