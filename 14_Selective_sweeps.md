@@ -1,6 +1,6 @@
 # Detecting selective sweeps with RAiSD
 
-Use [RAiSD]() to detect selective sweeps. The overarching logic here is to calculate the RAiSD *mu*-statistic on empirical data, then use simulated data based on the demographic history of each population (as recovered in PopSizeABC) to set a population-specific threshold for distinguishing what *mu* value is considered a selective sweep.
+Use [RAiSD](https://github.com/alachins/raisd) to detect selective sweeps. The overarching logic here is to calculate the RAiSD *mu*-statistic on empirical data, then use simulated data based on the demographic history of each population (as recovered in PopSizeABC) to set a population-specific threshold for distinguishing what *mu* value is considered a selective sweep.
 
 ## Prepare empirical input files
 
