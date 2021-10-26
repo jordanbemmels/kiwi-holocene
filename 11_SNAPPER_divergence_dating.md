@@ -61,7 +61,7 @@ Repeat the Beast2 command for 5 replicate runs (in different directories), and w
 
 ## Post-processing of individual runs
 
-Population size (theta) is not printed to the SNAPPER output by defalt. Add theta using the ```add_theta_to_log.rb``` script that is [distributed](https://github.com/mmatschiner/snapp_prep) with SNAPP / SNAPPER. We must provide the generation time with ```-g```. The generation time for kiwi was estimated to be 19.1357 years (see published manuscript text).
+Population size (theta) is not printed to the SNAPPER output by defalt. Add theta using the ```add_theta_to_log.rb``` script that is [distributed](https://github.com/mmatschiner/snapp_prep) with SNAPP / SNAPPER. We must provide the generation time with ```-g```. The generation time for kiwi was estimated to be 19.1357 years (see manuscript text).
 
 ```
 ruby add_theta_to_log.rb -l snapper.log -t snapper.trees -g 19.1357 -o snapper_w_popsize.log
