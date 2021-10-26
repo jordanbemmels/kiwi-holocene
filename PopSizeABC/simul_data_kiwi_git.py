@@ -1,6 +1,4 @@
 # This script simulates genomic samples, and the corresponding AFS, LD and IBS summary statistics, as described in the manuscript.
-# To call it from a terminal, go into the 'abc_code' directory and run the command :
-# python simul_data.py
 
 # Results will be written in the 'res' directory, in two files with suffices .params and .stat.
 # Each of this file includes one line per simulated dataset. Each column in the params file corresponds to a different parameter, organized as follows :
