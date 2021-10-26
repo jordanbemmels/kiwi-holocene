@@ -27,7 +27,7 @@ bcftools index Kiwi_11genomes.min5max21.vcf.gz
 
 ## Extract genes
 
-Coding sequence (CDS) sites are extracted using BCFtools. Importantly, the ```-M``` and ```--absent``` (```-a```) options should be set to avoid having missing data replaced with the reference allele (this requires bcftools version 1.11+).
+Coding sequence (CDS) sites are extracted for each individual using BCFtools and outputted as a .bed file. Importantly, the ```-M``` and ```--absent``` (```-a```) options should be set to avoid having missing data replaced with the reference allele (this requires bcftools version 1.11+).
 
 ```
 #create a consensus genome sequence for each sample
@@ -62,3 +62,25 @@ cat Aptrow.longest_RNA.txt | while read gene ; do head -n 1 bed/"$gene".bed | cu
 #reverse the order of the exons in the bed file for genes on the minus strand
 cat strandedness | while read gene strandedness ; do if [[ "$strandedness" == "-" ]]; then sort --numeric-sort --reverse -k 2 bed/"$gene".bed > temp && mv temp bed/"$gene".bed ; fi ; done
 ```
+
+## Extract sequences from genes
+
+Now we can use bedtools to extract the CDS from each sample using the bed files.
+
+```
+mkdir genes
+#bedtools will extract a sequence for each of the CDS exons listed in the file, producing separate fasta entries for each exon
+#then, we can process that file right away: remove the headers, remove the newlines (concatenating the exons), add a newline to the end, then add a header. That gives a single fasta entry for the whole CDS
+#then concatenate that sequence to a single fasta that will hold the gene sequence for all samples. Make sure the unique sample name makes it into the fasta header so you can tell which is which.
+
+#first, start it out with just the reference genome
+#cat Aptrow.longest_RNA.txt | while read gene ; do bedtools getfasta -fi kiwi_ref_genome.fna -bed bed/"$gene".bed | sed 's/>.*$//g' | tr -d '\n' | sed 's/$/\n/g' | sed "s/^/>$sample\n/g" >> genes/"$gene".fa ; done
+
+#loop through each sample and each gene
+cat samples | cut -f 2 -d " " | while read sample ; do time cat Aptrow.longest_RNA.txt | while read gene ; do bedtools getfasta -s -fi filtered_genomes/"$sample".fa -bed bed/"$gene".bed | sed 's/>.*$//g' | tr -d '\n' | sed 's/$/\n/g' | sed "s/^/>$sample\n/g" >> genes/"$gene".fa ; done ; done
+
+#cat samples | cut -f 2 -d " " | while read sample ; do time cat Aptrow.longest_RNA.txt | parallel bedtools getfasta -fi filtered_genomes/"$sample".fa -bed bed/{1}.bed '|' sed 's/>.*$//g' '|' tr -d '\n' '|' sed 's/$/\n/g' '|' sed "s/^/>$sample\n/g" '>>' genes/{1}.fa ; done
+```
+
+Now we have fasta files containing (unaligned) gene sequences for each annotated kiwi gene.
+
