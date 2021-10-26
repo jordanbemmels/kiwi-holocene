@@ -241,32 +241,14 @@ cat incompletetrim | parallel --jobs 30 time /home/0_PROGRAMS/iqtree-2.0.5-Linux
 Test for positive selection in kiwi internal and external branches using the *aBSREL* program within [HyPhy](https://stevenweaver.github.io/hyphy-site/). 
 
 ```
-cd /home/0_GENOMES5/kiwi/2_lineage_selection/
-conda activate hyphy
-#cat /home/0_GENOMES5/kiwi/0_data/Aptrow.longest_RNA.txt | tail -n 1 | parallel time hyphy gard /home/0_GENOMES5/kiwi/0_data/alignments/{1}.trim.macse.fna
-
 #label the taxa of interest
-#cat single_copy_orthologs | head -n 1000 | parallel time /home/0_PROGRAMS/hyphy-develop/HYPHYMP /home/0_PROGRAMS/hyphy-analyses/LabelTrees/label-tree.bf LIBPATH=/home/0_PROGRAMS/miniconda3/envs/hyphy/lib/hyphy --tree /home/0_GENOMES5/kiwi/2_lineage_selection/genetrees/{1}.treefile --list samples --output /home/0_GENOMES5/kiwi/2_lineage_selection/genetrees/{1}.labelled.treefile 
-#time cat single_copy_orthologs | tail -n 7000 |  parallel time /home/0_PROGRAMS/hyphy-develop/HYPHYMP /home/0_PROGRAMS/hyphy-analyses/LabelTrees/label-tree.bf LIBPATH=/home/0_PROGRAMS/miniconda3/envs/hyphy/lib/hyphy --tree /home/0_GENOMES5/kiwi/2_lineage_selection/genetrees/{1}.treefile --list samples --output /home/0_GENOMES5/kiwi/2_lineage_selection/genetrees/{1}.labelled.treefile 
-time cat incompletetrim | parallel time /home/0_PROGRAMS/hyphy-develop/HYPHYMP /home/0_PROGRAMS/hyphy-analyses/LabelTrees/label-tree.bf LIBPATH=/home/0_PROGRAMS/miniconda3/envs/hyphy/lib/hyphy --tree /home/0_GENOMES5/kiwi/2_lineage_selection/genetrees/{1}.treefile --list samples --output /home/0_GENOMES5/kiwi/2_lineage_selection/genetrees/{1}.labelled.treefile 
-
-#Busted
-#mkdir BUSTED
-#cat /home/0_GENOMES5/kiwi/0_data/Aptrow.longest_RNA.txt | tail -n 1 | parallel time hyphy busted --alignment /home/0_GENOMES5/kiwi/0_data/alignments/{1}.trim.macse.fna --tree /home/0_GENOMES5/kiwi/2_lineage_selection/genetrees/{1}.labelled.treefile --srv Yes --output BUSTED/{1}_BUSTED.json
-#cat /home/0_GENOMES5/kiwi/0_data/Aptrow.longest_RNA.txt | tail -n 1 | parallel time hyphy busted --alignment alignments/{1}.trim.macse.fna --tree genetrees/rna-XM_026055111.1.labelled.treefile --srv Yes --output BUSTED/rna-XM_026055111.1_BUSTED.json
+cat incompletetrim | parallel time /home/0_PROGRAMS/hyphy-develop/HYPHYMP /home/0_PROGRAMS/hyphy-analyses/LabelTrees/label-tree.bf LIBPATH=/home/0_PROGRAMS/miniconda3/envs/hyphy/lib/hyphy --tree genetrees/{1}.treefile --list samples --output genetrees/{1}.labelled.treefile 
 
 #absrel will not allow there to be a discrepancy between names in the alignment (which has a space followed by gene name) and tree (which stripped the space and all that followed it)
-#cat single_copy_orthologs | head -n 1000 | parallel 'sed "s/ .*$//g" /home/0_GENOMES5/kiwi/2_lineage_selection/cleaned_alignments/{1}_hmmcleaned_final_align_NT.aln > /home/0_GENOMES5/kiwi/2_lineage_selection/cleaned_alignments/{1}_hmmcleaned_final_align_NT.forHyphy.aln'
-#cat single_copy_orthologs | tail -n 7000 | time parallel 'sed "s/ .*$//g" /home/0_GENOMES5/kiwi/2_lineage_selection/cleaned_alignments/{1}_hmmcleaned_final_align_NT.aln > /home/0_GENOMES5/kiwi/2_lineage_selection/cleaned_alignments/{1}_hmmcleaned_final_align_NT.forHyphy.aln'
-cat incompletetrim | time parallel 'sed "s/ .*$//g" /home/0_GENOMES5/kiwi/2_lineage_selection/cleaned_alignments/{1}_hmmcleaned_final_align_NT.aln > /home/0_GENOMES5/kiwi/2_lineage_selection/cleaned_alignments/{1}_hmmcleaned_final_align_NT.forHyphy.aln'
+cat incompletetrim | time parallel 'sed "s/ .*$//g" cleaned_alignments/{1}_hmmcleaned_final_align_NT.aln > cleaned_alignments/{1}_hmmcleaned_final_align_NT.forHyphy.aln'
 
 #absrel
 mkdir -p absrel
-#time cat single_copy_orthologs | head -n 1000 | parallel time hyphy absrel --alignment /home/0_GENOMES5/kiwi/2_lineage_selection/cleaned_alignments/{1}_hmmcleaned_final_align_NT.forHyphy.aln --tree genetrees/{1}.labelled.treefile --output absrel/{1}.json --branches Foreground '>' absrel/{1}.txt
-#time cat single_copy_orthologs | tail -n 7000 | parallel --jobs 30 time hyphy absrel --alignment /home/0_GENOMES5/kiwi/2_lineage_selection/cleaned_alignments/{1}_hmmcleaned_final_align_NT.forHyphy.aln --tree genetrees/{1}.labelled.treefile --output absrel/{1}.json --branches Foreground '>' absrel/{1}.txt
-time cat incompletetrim | parallel --jobs 30 time hyphy absrel --alignment /home/0_GENOMES5/kiwi/2_lineage_selection/cleaned_alignments/{1}_hmmcleaned_final_align_NT.forHyphy.aln --tree genetrees/{1}.labelled.treefile --output absrel/{1}.json --branches Foreground '>' absrel/{1}.txt
-
-#cat single_copy_orthologs | head -n 1 | parallel time hyphy absrel --alignment /home/0_GENOMES5/kiwi/2_lineage_selection/temp.aln --tree genetrees/{1}.labelled.treefile --output absrel/{1}.json --branches Foreground
-
-#hyphy absrel --alignment rna-XM_026055111.1.trim.macse.fna --tree rna-XM_026055111.1.labelled.treefile --output temp.json
+cat incompletetrim | parallel --jobs 30 time hyphy absrel --alignment cleaned_alignments/{1}_hmmcleaned_final_align_NT.forHyphy.aln --tree genetrees/{1}.labelled.treefile --output absrel/{1}.json --branches Foreground '>' absrel/{1}.txt
 ```
+
