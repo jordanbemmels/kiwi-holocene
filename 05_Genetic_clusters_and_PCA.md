@@ -6,7 +6,7 @@ Use the sites whitelist ([previously](https://github.com/jordanbemmels/kiwi-holo
 sites_bfv2_3x_maf0136_55ind_10kbp_noZ.txt
 ```
 
-The input for [PCAngsd](http://www.popgen.dk/software/index.php/PCAngsdv2) is a BEAGLE-formatted file. Use ANGSD to create the BEAGLE file (-doGlf 2). Note that because in our [previous analysis](https://github.com/jordanbemmels/kiwi-holocene/blob/main/03_Create_SNP_whitelists.md) we discovered three closely related individuals to remove, our list of input individuals now has only 52 individuals instead of all 55: ```BAM_FILES_LIST_52ind.txt```.
+The input for [PCAngsd](http://www.popgen.dk/software/index.php/PCAngsdv2) is a BEAGLE-formatted file. Use ANGSD to create the BEAGLE file (-doGlf 2). Note that because in our [previous analysis](https://github.com/jordanbemmels/kiwi-holocene/blob/main/04_Relatedness_of_individuals.md) we discovered three closely related individuals to remove, our list of input individuals now has only 52 individuals instead of all 55: ```BAM_FILES_LIST_52ind.txt```.
 
 ```
 FILTERS="-minMapQ 20 -minQ 20 -sites sites_bfv2_3x_maf0136_55ind_10kbp_noZ.txt"
