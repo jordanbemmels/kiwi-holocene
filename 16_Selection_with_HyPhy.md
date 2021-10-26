@@ -161,7 +161,7 @@ export PATH=$PATH:/home/0_PROGRAMS/ncbi-blast-2.11.0+/bin/
 
 ## PART II: SELECTION ANALYSES
 
-# Combine the outgroup and kiwi lineages
+## Combine the outgroup and kiwi lineages
 
 Add the orthologous outgroup sequences to the kiwi alignment.
 
