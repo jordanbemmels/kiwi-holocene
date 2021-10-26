@@ -171,7 +171,7 @@ Follow the example from above in the Whitelist 01 section to remove the Z-chromo
 sites_australis__Haast_bfv2_3x_maf00_noZ.txt
 ```
 
-Repeat the above for the remainin 10 lineages. These sites files are used as whitelists for PopSizeABC and RAiSD.
+Repeat the above for the remaining 10 lineages. These sites files are used as whitelists for PopSizeABC and RAiSD.
 
 # FILTERS FOR OTHER ANALYSES
 
