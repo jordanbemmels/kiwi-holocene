@@ -103,7 +103,7 @@ aHaast australis__Haast__KW40__RA0201_sorted 0 0 0 -999
 
 ## Set up stat_from_vcf.py file to calculate summary statistics
 
-Calculation of summary statistics is done using the ```stat_from_vcf.py``` file. Note that this script contains an extensive parameters section followed by the actual code (and thus I cannot provide a full example as the code is not mine to distribute). However, a few changes to the code section have already been described above. Here, I will provide text indicating how the ```parameters``` section was specified for the kiwi project, organized by the different subsections. The same parameters can be used for any kiwi population.
+Calculation of summary statistics is done using the ```stat_from_vcf.py``` file distributed with PopSizeABC. Note that this script contains an extensive parameters section followed by the actual code (and thus I cannot provide a full example as the code is not mine to distribute). However, a few changes to the code section have already been described above. Here, I will provide text indicating how the ```parameters``` section was specified for the kiwi project, organized by the different subsections. The same parameters can be used for any kiwi population.
 
 #### General parameters
 
