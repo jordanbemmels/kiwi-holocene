@@ -4,7 +4,7 @@ Use [RAiSD](https://github.com/alachins/raisd) to detect selective sweeps. The o
 
 ## Prepare empirical input files
 
-Input whitelists of lineage-specific variable sites (no minimum minor allele frequency) have [previously]() been described in Whitelist 03. We will use ANGSD to create VCF files of called SNPs using these sites, requiring data for all 5 individuals per population, and a minimum depth of 8x per individual per site to call the genotype. An example is showng for aHaast (also written as australis__Haast).
+Input whitelists of lineage-specific variable sites (no minimum minor allele frequency) have [previously](https://github.com/jordanbemmels/kiwi-holocene/blob/main/03_Create_SNP_whitelists.md) been described in Whitelist 03. We will use ANGSD to create VCF files of called SNPs using these sites, requiring data for all 5 individuals per population, and a minimum depth of 8x per individual per site to call the genotype. An example is showng for aHaast (also written as australis__Haast).
 
 ```
 FILTERS="-minQ 20 -minMapQ 20 -minInd 5 -setMinDepthInd 8"
