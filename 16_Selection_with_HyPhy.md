@@ -182,7 +182,7 @@ Now, we can align the sequences using a codon-aware aligner.
 
 While aligning sequences, we will also trim off the terminal stop codons (replacing them with gaps as needed) and replace terminal frameshifts (ie, cases where the CDS in incomplete and ends with just a partial codon.)
 
-An important consideration for dn/dS analyses is that they are very sensitive to the inclusion of poorly aligned or non-homologous regions in the alignment. These badly-aligned regions can elevate dN and lead to a false signal of "positive selection". One way that has been shown to greatly reduce this is to filter the alignment with [hmmCleaner](https://bioinformaticshome.com/tools/msa/descriptions/HmmCleaner.html). The amino acid alignment can be masked by hmmCleaner to remove putatively incorrect regions, and this can be passed to MACSE(http://bioweb.supagro.inra.fr/macse/) to be incorporated into the nucleotide alignment while also doing some mild post-filtering.
+An important consideration for dn/dS analyses is that they are very sensitive to the inclusion of poorly aligned or non-homologous regions in the alignment. These badly-aligned regions can elevate dN and lead to a false signal of "positive selection". One way that has been shown to greatly reduce this is to filter the alignment with [hmmCleaner](https://bioinformaticshome.com/tools/msa/descriptions/HmmCleaner.html). The amino acid alignment can be masked by hmmCleaner to remove putatively incorrect regions, and this can be passed to [MACSE](http://bioweb.supagro.inra.fr/macse/) to be incorporated into the nucleotide alignment while also doing some mild post-filtering.
 
 ```
 mkdir alignments
