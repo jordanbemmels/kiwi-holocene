@@ -118,7 +118,7 @@ cat palaeognathae_acessions.txt | head -n 1 | parallel --colsep " " liftoff -g G
 cat palaeognathae_acessions.txt | tail -n +1 | parallel --colsep " " liftoff -db GCF_003343035.1/Longest_CDS.gff_db -dir liftoff/{1}_{4}_liftoff -o liftoff/{1}_{4}_liftoff.gff -u liftoff/{1}_{4}.unmapped_features.txt ncbi_dataset/data/{1}/{1}_{4}_genomic.fna kiwi_ref_genome.fna
 ```
 
-Now that we have the annotations, we need to extract the protein and CDS sequences for each gene. For this task, we can use [gffread](https://github.com/gpertea/gffread). Liftoff did not polish the codon structure of the CDS's, so there are frameshifts that preclude directly translating them into AA sequence. To fix this, we can use [Transdecoder](https://github.com/TransDecoder/TransDecoder/wiki) to identify the longest open reading frame in each CDS and extract the corresponding protein sequence, which is what we will use to assign orthology.
+Now that we have the annotations, we need to extract the protein and CDS sequences for each gene. For this task, we can use [gffread](https://github.com/gpertea/gffread). Liftoff did not polish the codon structure of the CDSs, so there are frameshifts that preclude directly translating them into AA sequence. To fix this, we can use [Transdecoder](https://github.com/TransDecoder/TransDecoder/wiki) to identify the longest open reading frame in each CDS and extract the corresponding protein sequence, which is what we will use to assign orthology.
 
 ```
 mkdir -p transcriptome
