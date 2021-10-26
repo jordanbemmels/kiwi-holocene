@@ -195,7 +195,7 @@ Output files are ```batch003_L4_n10_s100.params``` and ```batch003_L4_n10_s100_m
 
 ## ABC analysis
 
-Example *R* code for the ABC analysis of results is provided in [PopSizeABC/abc_kiwi_git.R](). Note that this was largely re-written based on the code distributed with PopSizeABC, to have greater control and flexibility.
+Example *R* code for the ABC analysis of results is provided in [PopSizeABC/abc_kiwi_git.R](https://github.com/jordanbemmels/kiwi-holocene/blob/main/PopSizeABC/abc_kiwi_git.R). Note that this was largely re-written based on the code distributed with PopSizeABC, to have greater control and flexibility.
 
 The key line where the actual ABC parameter inference is performed in Line 134:
 
