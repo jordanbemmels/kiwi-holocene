@@ -53,7 +53,7 @@ Second is to ensure that we read the kiwi pedigree, not the default cattle pedig
 
 ## Call SNPs for each population and prepare population-specific input files
 
-An example is shown here for the popultion aHaast (also sometimes written australis__Haast).
+An example is shown here for the population aHaast (also sometimes written australis__Haast).
 
 SNPs will be called for each population using [ANGSD](http://www.popgen.dk/angsd/index.php/ANGSD). The creation of SNP whitelists for each population has been [previously](https://github.com/jordanbemmels/kiwi-holocene/blob/main/03_Create_SNP_whitelists.md) described under Whitelist 03. For example, for aHaast the filtered popultion-specific SNP file is ```sites_australis__Haast_bfv2_3x_maf00_noZ.txt1```. We will print a VCF file (```-dobcf 1```; output has .bcf file extension). Require data for all five individuals (```-minInd 5```), and a minimum depth of 8x to call a SNP for each individual (```-setMinDepthInd 8```).
 
