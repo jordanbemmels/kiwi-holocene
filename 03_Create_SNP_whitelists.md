@@ -132,7 +132,7 @@ Again, follow the same steps above from Whitelist 01 to remove the sites with ex
 
 Note that the Z-chromosome was not yet removed from this file (although it perhaps could have been).
 
-Finally, count the total number of sites in all 5-kbp windows of the genome. We use 5-kbp (quite small) so that we can employ modularity in downstream analyses if desired, i.e., we can quickly combine the windows to get the number of sites in windows that are any multiple of 5,000 bp, without having to tediously re-process the enormous file of all sites every single time. The summary of number of sites per 5-kbp is more wieldy. Use the script [countPer5kbpWindow_startPos1_git.py](https://github.com/jordanbemmels/kiwi-holocene/blob/main/countPer5kbpWindow_startPos1_git.py); the command-line arguments are an ANGSD-formatted .pos file, plus the output file name.
+Finally, count the total number of sites in all 5-kbp windows of the genome. We use 5-kbp (quite small) so that we can employ modularity in downstream analyses if desired, i.e., we can quickly combine the windows to get the number of sites in windows that are any multiple of 5,000 bp, without having to tediously re-process the enormous file of all sites every single time. A summary per 5-kbp segment is more wieldy. Use the script [countPer5kbpWindow_startPos1_git.py](https://github.com/jordanbemmels/kiwi-holocene/blob/main/countPer5kbpWindow_startPos1_git.py); the command-line arguments are an ANGSD-formatted .pos file, plus the output file name.
 
 ```
 python countPer5kbpWindow_startPos1_git.py allSites_filtered.pos allSites_filtered_5kbpWindow_startPos1.txt
