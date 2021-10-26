@@ -1,9 +1,8 @@
 # Selection analyses with HyPhy
 
-## PART I: PREPARE CODING SEQUENCES IN KIWI AND OUTGROUPS
+Code for this section was developed by manuscript author Else Mikkelsen. Consolidation and minor edits by Jordan Bemmels.
 
-Code for this section was developed by manuscript author Else Mikkelsen.
-Consolidation and minor edits by Jordan Bemmels.
+## PART I: PREPARE CODING SEQUENCES IN KIWI AND OUTGROUPS
 
 We will use the *aBSREL* model within [HyPhy](https://stevenweaver.github.io/hyphy-site/) to test for selection in the most recent common ancestor of kiwi.
 
@@ -251,4 +250,6 @@ cat incompletetrim | time parallel 'sed "s/ .*$//g" cleaned_alignments/{1}_hmmcl
 mkdir -p absrel
 cat incompletetrim | parallel --jobs 30 time hyphy absrel --alignment cleaned_alignments/{1}_hmmcleaned_final_align_NT.forHyphy.aln --tree genetrees/{1}.labelled.treefile --output absrel/{1}.json --branches Foreground '>' absrel/{1}.txt
 ```
+
+The output will be a .json and a .txt file for each gene. We are interested in the p-value for the node corresponding to the most recent common ancestor of all kiwi. We need to extrat the p-values then correct them for multiple comparisons (stnard Benjamini-Hochberg correction in *R*; see manuscript text).
 
