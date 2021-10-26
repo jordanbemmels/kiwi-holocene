@@ -25,7 +25,7 @@ angsd -b BAM__australis__NorthFiordland.txt -GL 1 -P 1 $FILTERS $TODO -out aNort
 
 ## Run the calcDxy.R script
 
-We are ready to run calcDxy.R script.
+We are ready to run the calcDxy.R script.
 
 The output of this command will be the **total** dxy (sum across all sites), rather than the per-site dXY averaged across all sites (what is normally meant by "dXY"). 
 
