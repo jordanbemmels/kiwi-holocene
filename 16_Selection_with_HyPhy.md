@@ -159,3 +159,114 @@ export PATH=$PATH:/home/0_PROGRAMS/ncbi-blast-2.11.0+/bin/
 /home/0_PROGRAMS/OrthoFinder/orthofinder -o ./orthofinder -f ./orthology -t 60 -S blast > ./orthofinder.log
 ```
 
+## PART II: SELECTION ANALYSES
+
+# Combine the outgroup and kiwi lineages
+
+Add the orthologous outgroup sequences to the kiwi alignment.
+
+```
+#get a copy of the kiwi data here, in order to preserve the original files and not overwrite
+cp -r genes ./kiwi_alignments #takes seconds
+
+#read the output of Orthofinder to see which genes are identified as orthologues to each kiwi gene. Then, go into the outgroup CDS files and extract those orthologues to concatenate them onto the appropriate gene fasta.
+#cat orthofinder/Results_*/Orthologues/Orthologues_longest.Aptrow.AA/longest.Aptrow.AA__v__GCA_003342835.1_rhePen1.longest_proteins.tsv | sed 's/ .*Apteryx rowi.//g' | sed 's/Rhea //g' | grep -v "," | tail -n +2 | while IFS=$'\t' read orthogroup kiwi out1 ; do /home/0_PROGRAMS/seqkit grep -p "$out1" transcriptome/GCA_003342835.1_rhePen1.longest_CDS.fna >> ./kiwi_alignments/"$kiwi".fa ; done 
+cat palaeognathae_acessions.txt | while read accession genus species assembly ; do time cat orthofinder/Results_*/Orthologues/Orthologues_longest.Aptrow.AA/longest.Aptrow.AA__v__"$accession"_"$assembly".tsv | sed 's/ .*Apteryx rowi.//g' | sed "s/$genus //g" | grep -v "," | sed 's/.p1.*_//g' | tail -n +2 | parallel --colsep "\t" /home/0_PROGRAMS/seqkit grep -p \"{3}\" transcriptome/"$accession"_"$assembly".longest_CDS.fna '|' sed '"s/>/>'$genus' /g"' '>>' ./kiwi_alignments/{2}.fa ; done
+
+#get list of single-copy orthologues
+cat orthofinder/Results_*/Orthogroups/Orthogroups_SingleCopyOrthologues.txt | parallel 'grep "Apteryx rowi" orthofinder/Results_*/Single_Copy_Orthologue_Sequences/{1}.fa | sed "s/ .*$//g" | sed "s/>//g" >> single_copy_orthologs'
+```
+
+## Align and filter
+
+Now, we can align the sequences using a codon-aware aligner.
+
+While aligning sequences, we will also trim off the terminal stop codons (replacing them with gaps as needed) and replace terminal frameshifts (ie, cases where the CDS in incomplete and ends with just a partial codon.)
+
+An important consideration for dn/dS analyses is that they are very sensitive to the inclusion of poorly aligned or non-homologous regions in the alignment. These badly-aligned regions can elevate dN and lead to a false signal of "positive selection". One way that has been shown to greatly reduce this is to filter the alignment with [hmmCleaner](https://bioinformaticshome.com/tools/msa/descriptions/HmmCleaner.html). The amino acid alignment can be masked by hmmCleaner to remove putatively incorrect regions, and this can be passed to MACSE(http://bioweb.supagro.inra.fr/macse/) to be incorporated into the nucleotide alignment while also doing some mild post-filtering.
+
+```
+mkdir alignments
+#align the sequences
+cat single_copy_orthologs | parallel time java -jar /home/0_PROGRAMS/macse_v2.05.jar -prog alignSequences -seq kiwi_alignments/{1}.fa -out_NT alignments/{1}.macse.fna -out_AA alignments/{1}.macse.faa
+#cat single_copy_orthologs | tail -n 7000 | parallel --jobs 20 time java -jar /home/0_PROGRAMS/macse_v2.05.jar -prog alignSequences -seq kiwi_alignments/{1}.fa -out_NT alignments/{1}.macse.fna -out_AA alignments/{1}.macse.faa
+
+#if need to restart after stopping part way through: make a list of the genes not done, and restart from there
+cat single_copy_orthologs | while read gene ; do if [ ! -f alignments/"$gene".macse.faa ] ; then echo "$gene" >> incomplete ; fi ; done
+cat incomplete | parallel --jobs 20 time java -jar /home/0_PROGRAMS/macse_v2.05.jar -prog alignSequences -seq kiwi_alignments/{1}.fa -out_NT alignments/{1}.macse.fna -out_AA alignments/{1}.macse.faa
+
+#it takes a long time. you can check progress like this to see how many are done:
+ls alignments/*.1.macse.fna | wc -l
+
+#remove frameshifts and terminal stop codons
+#cat single_copy_orthologs | head -n 1000 | parallel --jobs 30 time java -jar /home/0_PROGRAMS/macse_v2.05.jar -prog exportAlignment -align alignments/{1}.macse.fna -codonForInternalStop NNN -codonForFinalStop --- -codonForExternalFS --- -charForRemainingFS - -codonForInternalFS --- -out_NT alignments/{1}.trim.macse.fna -out_AA alignments/{1}.trim.macse.faa
+cat single_copy_orthologs | tail -n 7000 | parallel --jobs 30 time java -jar /home/0_PROGRAMS/macse_v2.05.jar -prog exportAlignment -align alignments/{1}.macse.fna -codonForInternalStop NNN -codonForFinalStop --- -codonForExternalFS --- -charForRemainingFS - -codonForInternalFS --- -out_NT alignments/{1}.trim.macse.fna -out_AA alignments/{1}.trim.macse.faa
+#if need to restart after stopping part way through: make a list of the genes not done, and restart from there
+cat single_copy_orthologs | while read gene ; do if [ ! -f alignments/"$gene".trim.macse.fna ] ; then echo "$gene" >> incompletetrim ; fi ; done
+cat incompletetrim | parallel --jobs 30 time java -jar /home/0_PROGRAMS/macse_v2.05.jar -prog exportAlignment -align alignments/{1}.macse.fna -codonForInternalStop NNN -codonForFinalStop --- -codonForExternalFS --- -charForRemainingFS - -codonForInternalFS --- -out_NT alignments/{1}.trim.macse.fna -out_AA alignments/{1}.trim.macse.faa
+
+#clean alignment with hmmcleaner if needed
+mkdir -p cleaned_alignments
+conda activate singularity
+export SINGULARITY_BINDPATH="/home/0_GENOMES5/kiwi/2_lineage_selection/alignments"
+#ln -s /home/0_PROGRAMS/MACSE_ALFIX_v01.sif .
+#filter DNA alignment with hmmcleaner
+#cat single_copy_orthologs | head -n 1000 | parallel --jobs 30 time singularity run /home/0_PROGRAMS/MACSE_ALFIX_v01.sif --out_dir cleaned_alignments --out_file_prefix {1}_hmmcleaned --in_seq_file alignments/{1}.trim.macse.fna --no_prefiltering --no_FS_detection
+#cat single_copy_orthologs | tail -n 7000 | parallel --jobs 30 time singularity run /home/0_PROGRAMS/MACSE_ALFIX_v01.sif --out_dir cleaned_alignments --out_file_prefix {1}_hmmcleaned --in_seq_file alignments/{1}.trim.macse.fna --no_prefiltering --no_FS_detection
+cat incompletetrim | parallel --jobs 30 time singularity run /home/0_PROGRAMS/MACSE_ALFIX_v01.sif --out_dir cleaned_alignments --out_file_prefix {1}_hmmcleaned --in_seq_file alignments/{1}.trim.macse.fna --no_prefiltering --no_FS_detection
+```
+
+## Make gene trees
+
+Make gene trees for individual loci using [IQ-Tree](http://www.iqtree.org/). Constrain all the kiwis to form a monophyletic clade (this is to ensure that the ancestral kiwi branch exists in every gene tree, since that is the branch we want to test for positive selection). Note that rooting does not matter - absrel will unroot a rooted tree. That is good for us because ILS may have affected the very base of the phylogenies (particularly in terms of whether Rhea or Crypturellus should be used to root the trees as the "outgroup").
+
+```
+cat > constraint.nwk
+```
+
+```
+(Rhea, Crypturellus, Casuarius, Dromaius, (australis__Haast__KW36__RA0997,australis__NorthFiordland__KW41__R32961, australis__SouthFiordland__KW50__RA0202, australis__StewartIsland__KW51__RA0891, haastii__haastii__KW26__CD830, mantelli__Coromandel__KW09__R32852, mantelli__Eastern__KW11__NIBKOpo1, mantelli__Northland__KW04__41, mantelli__Taranaki__KW18__kiwiCarcass1, owenii__Kapiti__KW24__O20581, rowi__Okarito__KW32__R32934));
+```
+
+```
+mkdir -p genetrees
+
+#cat single_copy_orthologs | head -n 1000 | parallel --jobs 30 time /home/0_PROGRAMS/iqtree-2.0.5-Linux/bin/iqtree2 -s cleaned_alignments/{1}_hmmcleaned_final_align_NT.aln --prefix genetrees/{1} -o Crypturellus -g constraint.nwk
+#cat single_copy_orthologs | tail -n 7000 | parallel --jobs 30 time /home/0_PROGRAMS/iqtree-2.0.5-Linux/bin/iqtree2 -s cleaned_alignments/{1}_hmmcleaned_final_align_NT.aln --prefix genetrees/{1} -o Crypturellus -g constraint.nwk
+cat incompletetrim | parallel --jobs 30 time /home/0_PROGRAMS/iqtree-2.0.5-Linux/bin/iqtree2 -s cleaned_alignments/{1}_hmmcleaned_final_align_NT.aln --prefix genetrees/{1} -o Crypturellus -g constraint.nwk
+```
+
+## Run HyPhy
+
+Test for positive selection in kiwi internal and external branches using the *aBSREL* program within [HyPhy](https://stevenweaver.github.io/hyphy-site/). 
+
+```
+cd /home/0_GENOMES5/kiwi/2_lineage_selection/
+conda activate hyphy
+#cat /home/0_GENOMES5/kiwi/0_data/Aptrow.longest_RNA.txt | tail -n 1 | parallel time hyphy gard /home/0_GENOMES5/kiwi/0_data/alignments/{1}.trim.macse.fna
+
+#label the taxa of interest
+#cat single_copy_orthologs | head -n 1000 | parallel time /home/0_PROGRAMS/hyphy-develop/HYPHYMP /home/0_PROGRAMS/hyphy-analyses/LabelTrees/label-tree.bf LIBPATH=/home/0_PROGRAMS/miniconda3/envs/hyphy/lib/hyphy --tree /home/0_GENOMES5/kiwi/2_lineage_selection/genetrees/{1}.treefile --list samples --output /home/0_GENOMES5/kiwi/2_lineage_selection/genetrees/{1}.labelled.treefile 
+#time cat single_copy_orthologs | tail -n 7000 |  parallel time /home/0_PROGRAMS/hyphy-develop/HYPHYMP /home/0_PROGRAMS/hyphy-analyses/LabelTrees/label-tree.bf LIBPATH=/home/0_PROGRAMS/miniconda3/envs/hyphy/lib/hyphy --tree /home/0_GENOMES5/kiwi/2_lineage_selection/genetrees/{1}.treefile --list samples --output /home/0_GENOMES5/kiwi/2_lineage_selection/genetrees/{1}.labelled.treefile 
+time cat incompletetrim | parallel time /home/0_PROGRAMS/hyphy-develop/HYPHYMP /home/0_PROGRAMS/hyphy-analyses/LabelTrees/label-tree.bf LIBPATH=/home/0_PROGRAMS/miniconda3/envs/hyphy/lib/hyphy --tree /home/0_GENOMES5/kiwi/2_lineage_selection/genetrees/{1}.treefile --list samples --output /home/0_GENOMES5/kiwi/2_lineage_selection/genetrees/{1}.labelled.treefile 
+
+#Busted
+#mkdir BUSTED
+#cat /home/0_GENOMES5/kiwi/0_data/Aptrow.longest_RNA.txt | tail -n 1 | parallel time hyphy busted --alignment /home/0_GENOMES5/kiwi/0_data/alignments/{1}.trim.macse.fna --tree /home/0_GENOMES5/kiwi/2_lineage_selection/genetrees/{1}.labelled.treefile --srv Yes --output BUSTED/{1}_BUSTED.json
+#cat /home/0_GENOMES5/kiwi/0_data/Aptrow.longest_RNA.txt | tail -n 1 | parallel time hyphy busted --alignment alignments/{1}.trim.macse.fna --tree genetrees/rna-XM_026055111.1.labelled.treefile --srv Yes --output BUSTED/rna-XM_026055111.1_BUSTED.json
+
+#absrel will not allow there to be a discrepancy between names in the alignment (which has a space followed by gene name) and tree (which stripped the space and all that followed it)
+#cat single_copy_orthologs | head -n 1000 | parallel 'sed "s/ .*$//g" /home/0_GENOMES5/kiwi/2_lineage_selection/cleaned_alignments/{1}_hmmcleaned_final_align_NT.aln > /home/0_GENOMES5/kiwi/2_lineage_selection/cleaned_alignments/{1}_hmmcleaned_final_align_NT.forHyphy.aln'
+#cat single_copy_orthologs | tail -n 7000 | time parallel 'sed "s/ .*$//g" /home/0_GENOMES5/kiwi/2_lineage_selection/cleaned_alignments/{1}_hmmcleaned_final_align_NT.aln > /home/0_GENOMES5/kiwi/2_lineage_selection/cleaned_alignments/{1}_hmmcleaned_final_align_NT.forHyphy.aln'
+cat incompletetrim | time parallel 'sed "s/ .*$//g" /home/0_GENOMES5/kiwi/2_lineage_selection/cleaned_alignments/{1}_hmmcleaned_final_align_NT.aln > /home/0_GENOMES5/kiwi/2_lineage_selection/cleaned_alignments/{1}_hmmcleaned_final_align_NT.forHyphy.aln'
+
+#absrel
+mkdir -p absrel
+#time cat single_copy_orthologs | head -n 1000 | parallel time hyphy absrel --alignment /home/0_GENOMES5/kiwi/2_lineage_selection/cleaned_alignments/{1}_hmmcleaned_final_align_NT.forHyphy.aln --tree genetrees/{1}.labelled.treefile --output absrel/{1}.json --branches Foreground '>' absrel/{1}.txt
+#time cat single_copy_orthologs | tail -n 7000 | parallel --jobs 30 time hyphy absrel --alignment /home/0_GENOMES5/kiwi/2_lineage_selection/cleaned_alignments/{1}_hmmcleaned_final_align_NT.forHyphy.aln --tree genetrees/{1}.labelled.treefile --output absrel/{1}.json --branches Foreground '>' absrel/{1}.txt
+time cat incompletetrim | parallel --jobs 30 time hyphy absrel --alignment /home/0_GENOMES5/kiwi/2_lineage_selection/cleaned_alignments/{1}_hmmcleaned_final_align_NT.forHyphy.aln --tree genetrees/{1}.labelled.treefile --output absrel/{1}.json --branches Foreground '>' absrel/{1}.txt
+
+#cat single_copy_orthologs | head -n 1 | parallel time hyphy absrel --alignment /home/0_GENOMES5/kiwi/2_lineage_selection/temp.aln --tree genetrees/{1}.labelled.treefile --output absrel/{1}.json --branches Foreground
+
+#hyphy absrel --alignment rna-XM_026055111.1.trim.macse.fna --tree rna-XM_026055111.1.labelled.treefile --output temp.json
+```
