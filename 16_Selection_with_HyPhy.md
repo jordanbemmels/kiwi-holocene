@@ -251,5 +251,5 @@ mkdir -p absrel
 cat incompletetrim | parallel --jobs 30 time hyphy absrel --alignment cleaned_alignments/{1}_hmmcleaned_final_align_NT.forHyphy.aln --tree genetrees/{1}.labelled.treefile --output absrel/{1}.json --branches Foreground '>' absrel/{1}.txt
 ```
 
-The output will be a .json and a .txt file for each gene. We are interested in the p-value for the node corresponding to the most recent common ancestor of all kiwi. We need to extrat the p-values then correct them for multiple comparisons (stnard Benjamini-Hochberg correction in *R*; see manuscript text).
+The output will be a .json and a .txt file for each gene. We are interested in the p-value for the node corresponding to the most recent common ancestor of all kiwi. We need to extrat the p-values then correct them for multiple comparisons (use the standard Benjamini-Hochberg correction in *R*; see manuscript text).
 
