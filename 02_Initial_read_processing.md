@@ -19,7 +19,7 @@ java -jar trimmomatic-0.39.jar PE -threads 3 SAMPLE_R1_001.fasta.gz \
 
 ## Align reads to reference genome
 
-This is done with [Bowtie2](http://bowtie-bio.sourceforge.net/bowtie2/index.shtml). The output is then piped through [SAMtools](http://www.htslib.org/) and saved as a .bam file.
+This is done with [Bowtie2](http://bowtie-bio.sourceforge.net/bowtie2/index.shtml), using the ```--very-sensitive``` group of settings. The output is then piped through [SAMtools](http://www.htslib.org/) and saved as a .bam file.
                                       
 ```
 bowtie2 -q --very-sensitive --no-unal --phred33 --time --threads 3 -x kiwi_ref_genome \
