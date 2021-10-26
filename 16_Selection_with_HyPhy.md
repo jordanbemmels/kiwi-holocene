@@ -1,6 +1,6 @@
 # Selection analyses with HyPhy
 
-# PART I: PREPARE CODING SEQUENCES IN KIWI AND OUTGROUPS
+## PART I: PREPARE CODING SEQUENCES IN KIWI AND OUTGROUPS
 
 Code for this section was developed by manuscript author Else Mikkelsen.
 Consolidation and minor edits by Jordan Bemmels.
@@ -131,5 +131,31 @@ mkdir transcriptome/transdecoder
 cat palaeognathae_acessions.txt | parallel --colsep " " mkdir transcriptome/transdecoder/{1}_{4} ';' /home/0_PROGRAMS/TransDecoder-TransDecoder-v5.5.0/TransDecoder.LongOrfs -t transcriptome/{1}_{4}.longest_CDS.fna -m 30 -S --output_dir transcriptome/transdecoder/{1}_{4}
 export PERL5LIB=/home/0_PROGRAMS/TransDecoder-TransDecoder-v5.5.0/PerlLib
 cat palaeognathae_acessions.txt | parallel --colsep " " perl /home/0_PROGRAMS/TransDecoder-TransDecoder-v5.5.0/get_longest_ORF_per_transcript.pl transcriptome/transdecoder/{1}_{4}/longest_orfs.pep '>' transcriptome/transdecoder/{1}_{4}.faa #dont use the script copy in the util folder, and make sure to set PERL5LIB to point to where transdecoder has its perl modules
+```
+
+## Assign orthology
+
+Use [OrthoFinder](https://github.com/davidemms/OrthoFinder) to assigne orthologs between all taxa. We can use this info to select single-copy orthologs to analyze.
+
+```
+mkdir -p orthology
+
+#combine all proteomes of interest into a single folder
+cat palaeognathae_acessions.txt | parallel --colsep " " cp transcriptome/transdecoder/{1}_{4}.faa orthology
+time /home/0_PROGRAMS/seqkit grep -r -n -f Aptrow.longest_AA.txt GCF_003343035.1/protein.faa > orthology/longest.Aptrow.AA.fa
+
+#add names of taxa to the fasta headers in each proteome to keep track
+cat palaeognathae_acessions.txt | parallel --colsep " " sed -i '"s/>/>{2} /g"' orthology/{1}_{4}.faa
+#replace protein name with RNA name for kiwi
+paste Aptrow.longest_AA.txt Aptrow.longest_RNA.txt > name_map
+time /home/0_PROGRAMS/maker/bin/map_fasta_ids name_map orthology/longest.Aptrow.AA.fa
+
+#run OrthoFinder
+#set up environment for OrthoFinder
+export PATH=$PATH:/home/0_PROGRAMS/fastme-2.1.5/binaries
+export PATH=$PATH:/home/0_PROGRAMS/ #for Diamond
+export PATH=$PATH:/home/0_PROGRAMS/OrthoFinder
+export PATH=$PATH:/home/0_PROGRAMS/ncbi-blast-2.11.0+/bin/
+/home/0_PROGRAMS/OrthoFinder/orthofinder -o ./orthofinder -f ./orthology -t 60 -S blast > ./orthofinder.log
 ```
 
