@@ -14,7 +14,7 @@ TODO="-doGlf 2 -doMajorMinor 3 -doMaf 1"
 angsd -b BAM_FILES_LIST_52ind.txt -GL 1 -P 1 $FILTERS $TODO -out genolike_maf0136_10kbp_noZ_52ind
 ```
 
-Run PCAngsd with the number of clusters determined automatically by the program (no -e parameter specified). Since we switched to 52 instead of 55 individuals without changing the input sites file, the minimum minor allele frequency (minMAF) that corresponds to non-singletons needs to be updated. The new cutoff for identifying non-singletons will be 1.5 / (2\*52) = 0.0144, set directly in PCAngsd with ```-minMAF 0.0144```. Otherwise, the PCAngsd default is 0.05.
+Run PCAngsd with the number of clusters determined automatically by the program (no ```-e``` parameter specified). Since we switched to 52 instead of 55 individuals without changing the input sites file, the minimum minor allele frequency (minMAF) that corresponds to non-singletons needs to be updated. The new cutoff for identifying non-singletons will be 1.5 / (2\*52) = 0.0144, set directly in PCAngsd with ```-minMAF 0.0144```. Otherwise, the PCAngsd default is 0.05.
 
 ```
 python pcangsd.py -beagle genolike_maf0136_10kbp_noZ_52ind.beagle.gz -admix -o maf0136_min0144_52ind_eAuto -minMaf 0.0144 -threads 4
