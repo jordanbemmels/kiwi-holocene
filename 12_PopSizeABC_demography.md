@@ -117,7 +117,7 @@ mac_ld=1 # minor allele count threshold for LD statistics computation
 L=4000000 # size of each segment, in bp.
 ```
 
-Note that we have re-defined the script to take the population name as a command-line argument. By setting ```mac``` and ```mac_ld``` to ```1```, we do not implement any minimum minor allele frequency. The size of each segment, in basepairs (```L=4000000```) is relevant in the simultions (described below), and is used here to set the largest physical distance will be for which LD statistics are calculated. It is set to 4,000,000 bp here because we have very few scaffolds larger than this size, so we would not be able to obtain an adequate number of non-physically-overlapping SNP pairs to have a robust estimate of LD at larger distances in the genome in the empirical data for kiwi.
+Note that we have re-defined the script to take the population name as a command-line argument. By setting ```mac``` and ```mac_ld``` to ```1```, we do not implement any minimum minor allele frequency. The size of each segment, in basepairs (```L=4000000```) is used to set the largest physical distance will be for which LD statistics are calculated. It is set to 4,000,000 bp here because we have very few scaffolds larger than this size, so we would not be able to obtain an adequate number of non-physically-overlapping SNP pairs to have a robust estimate of LD at larger distances in the genome in the empirical data for kiwi.
 
 #### Time windows
 
