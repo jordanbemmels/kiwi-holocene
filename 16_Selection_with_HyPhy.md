@@ -134,7 +134,7 @@ cat palaeognathae_acessions.txt | parallel --colsep " " perl /home/0_PROGRAMS/Tr
 
 ## Assign orthology
 
-Use [OrthoFinder](https://github.com/davidemms/OrthoFinder) to assigne orthologs between all taxa. We can use this info to select single-copy orthologs to analyze.
+Use [OrthoFinder](https://github.com/davidemms/OrthoFinder) to assign orthologs between all taxa. We can use this info to select single-copy orthologs to analyze.
 
 ```
 mkdir -p orthology
