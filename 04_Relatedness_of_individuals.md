@@ -24,7 +24,7 @@ Now, run ngsRelateV2 using the generated .bcf file. Note that ngsRelateV2 uses t
 ngsRelate -h aHaast_10kbp.bcf -O aHaast_10kbp.res
 ```
 
-Inspect the aHaast_10kbp.res output. Pairs of individuals with a KING coefficient ~0.25 or higher are parent-offspring or full-sibs and should be removed. According to [Manichaikul et al. (2010)](https://doi.org/10.1093/bioinformatics/btq559), the expected range around ~0.25 is [0.177, 0.354], so exclude one individual from any pairs with KING coefficient with KING coefficient ≥0.177.
+Inspect the aHaast_10kbp.res output. Pairs of individuals with a KING coefficient ~0.25 or higher are parent-offspring or full-sibs and should be removed. According to [Manichaikul et al. (2010)](https://doi.org/10.1093/bioinformatics/btq559), the expected range around ~0.25 is [0.177, 0.354], so exclude one individual from any pairs with KING coefficient ≥0.177.
 
 Manichaikul A, Mychaleckyj JC, Rich SS, Daly K, Sale M, Chen WM. 2010 Robust relationship inference in genome-wide association studies. Bioinformatics 26, 2867–2873.
 
