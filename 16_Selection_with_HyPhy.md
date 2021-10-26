@@ -48,6 +48,15 @@ cat samples | parallel --colsep " " time /home/0_PROGRAMS/maker/bin/map_fasta_id
 #note if you had already indexed the fastas, you must now index them again
 ```
 
+Detour: there are multiple isoforms available for some genes. Ideally, we might pick the most abundantly expressed isoform of each gene. We do not have that information for our species and we will choose the longest isoform of each gene instead. We already made a list of the longest isoforms for each gene annotated for Apteryx (Aptrow.longest_AA.txt). Use this list. It lists the protein names, so we need to translate these into a list of RNA names that will be used for the CDS sequences.
+
+```
+cd /home/0_GENOMES5/kiwi/0_data
+cat Aptrow.longest_AA.txt | while read protein ; do grep "$protein" GCF_003343035.1/genomic.gff | head -n 1 | sed 's/^.*;Parent=//g' | sed 's/;.*$//g' >> Aptrow.longest_RNA.txt ; done
+```
+
+Ready to continue.
+
 Obtain a .bed file listing the location of each gene in the genome, using [BEDOPS](https://bedops.readthedocs.io/en/latest/). Critically, this must list the coordinates for the coding sequences (CDS), without the introns or untranslated regions, since we will need to be able to translate them straight into protein sequence.
 
 ```
