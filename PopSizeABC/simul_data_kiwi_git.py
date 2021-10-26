@@ -1,17 +1,9 @@
 # This script simulates genomic samples, and the corresponding AFS, LD and IBS summary statistics, as described in the manuscript.
 
-# Results will be written in the 'res' directory, in two files with suffices .params and .stat.
-# Each of this file includes one line per simulated dataset. Each column in the params file corresponds to a different parameter, organized as follows :
-# mutation_rate recombination_rate pop_size_1 pop_size_2 .... pop_size_I
-# where I is the number of intervals.
-# Each column in the stat file corresponds to a different statistic, organized as follows :
-# AFS0 AFS1 ... AFSn LD1 LD2 ... LDp IBS1 IBS2 ... IBSq
-# where n is the number of diploid individuals, p is the number of physical distance bins, and q is the number of IBS quantiles.
-# If option save_ms is set to True, a compressed tar file example.ms.tar.bz2 including the raw ms output for all simulated datasets and all segments is also created.
+# Although this is an input file for PopSizeABC simulations, some of the lines of code did not need modifications and are exactly the same as those from PopSizeABC example scripts distributed with the program. Unavoidably, I (Jordan Bemmels) needed to retain many lines of codes which I did not develop myself, in order that the example input file can be run successfully. The PopSizeABC code is all freely available at https://forge-dga.jouy.inra.fr/projects/popsizeabc. Full credit for unmodified lines of codes and for the general setup of this input file belongs to the authors of PopSizeABC (but any errors or inconsistencies are my own):
 
-# Simulation settings are similar to those used in our study, but this can easily be changed by modifying variables in the parameters section below.
-# In practice, it is strongly recommended to excute this script using many processors in parallel (with different output names!) and to merge all output files at the end.
- 
+# Boitard S, Rodríguez W, Jay F, Mona S, Austerlitz F. 2016 Inferring population size history from large samples of genome-wide molecular data - an Approximate Bayesian Computation approach. PLoS Genet. 12, 1–36. (doi:10.1371/journal.pgen.1005877)
+
 ################################################
 ############### dependencies ###################
 ################################################
