@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/418941881.svg)](https://zenodo.org/badge/latestdoi/418941881)
+
 This repository contains example commands for analyses run in the manuscript:
 
 Jordan B. Bemmels, Else K. Mikkelsen, Oliver Haddrath, Rogan M. Colbourne, Hugh A. Robertson, Jason T. Weir. Demographic decline and lineage-specific adaptations characterize New Zealand kiwi. Proceedings of the Royal Society B, in press.
