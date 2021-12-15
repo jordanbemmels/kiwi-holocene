@@ -2,7 +2,7 @@
 
 This repository contains example commands for analyses run in the manuscript:
 
-Jordan B. Bemmels, Else K. Mikkelsen, Oliver Haddrath, Rogan M. Colbourne, Hugh A. Robertson, Jason T. Weir. Demographic decline and lineage-specific adaptations characterize New Zealand kiwi. Proceedings of the Royal Society B, in press.
+Jordan B. Bemmels, Else K. Mikkelsen, Oliver Haddrath, Rogan M. Colbourne, Hugh A. Robertson, Jason T. Weir. 2021. Demographic decline and lineage-specific adaptations characterize New Zealand kiwi. Proceedings of the Royal Society B, <b>288:</b> 20212362. [DOI: 10.1098/rspb.2021.2362](http://doi.org/10.1098/rspb.2021.2362)
 
 Note that there was no substantial new program or software developed for this manuscript; rather, the focus of this repository is providing example commands demonstrating how existing software was run, as a supplement to the verbal explanations in the manuscript and manuscript supplementary info.
 
